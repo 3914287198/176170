@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>404 | 页面未找到</title>
+  <style>
+    :root{
+      --bg:#05060a;
+      --fg:#e6f1ff;
+      --muted:#9fb3c8;
+      --cyan:#00f5ff;
+      --pink:#ff3df2;
+      --purple:#7c4dff;
+      --green:#00ff9a;
+      --shadow: 0 0 24px rgba(0,245,255,.35), 0 0 60px rgba(255,61,242,.18);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC",
+                   "Hiragino Sans GB","Microsoft YaHei", Arial, "Noto Sans CJK SC", sans-serif;
+      color:var(--fg);
+      background: radial-gradient(1200px 800px at 20% 10%, rgba(124,77,255,.16), transparent 60%),
+                  radial-gradient(900px 700px at 80% 30%, rgba(0,245,255,.14), transparent 60%),
+                  radial-gradient(800px 700px at 50% 90%, rgba(255,61,242,.10), transparent 60%),
+                  var(--bg);
+      overflow:hidden;
+    }
+
+    /* 背景网格 */
+    .grid{
+      position:fixed; inset:0;
+      background:
+        linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(circle at 50% 40%, rgba(0,0,0,.95), rgba(0,0,0,.2) 55%, transparent 75%);
+      opacity:.35;
+      pointer-events:none;
+      transform: perspective(900px) rotateX(55deg) translateY(120px) scale(1.1);
+      transform-origin: center;
+      filter: drop-shadow(0 0 18px rgba(0,245,255,.15));
+    }
+
+    /* 扫描线 + 轻微噪点 */
+    .scanlines{
+      position:fixed; inset:0;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.05) 0px,
+          rgba(255,255,255,.05) 1px,
+          transparent 2px,
+          transparent 6px
+        );
+      opacity:.12;
+      mix-blend-mode: overlay;
+      pointer-events:none;
+    }
+    .noise{
+      position:fixed; inset:-40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
+      opacity:.08;
+      pointer-events:none;
+      mix-blend-mode: soft-light;
+      animation: jitter 4s infinite steps(2,end);
+    }
+    @keyframes jitter{
+      0%{transform:translate3d(0,0,0)}
+      25%{transform:translate3d(-10px,6px,0)}
+      50%{transform:translate3d(8px,-8px,0)}
+      75%{transform:translate3d(-6px,-10px,0)}
+      100%{transform:translate3d(0,0,0)}
+    }
+
+    /* 粒子画布 */
+    canvas#fx{
+      position:fixed; inset:0;
+      width:100%; height:100%;
+      pointer-events:none;
+      filter: drop-shadow(0 0 10px rgba(0,245,255,.18));
+    }
+
+    .wrap{
+      position:relative;
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding: 24px;
+    }
+
+    .card{
+      width:min(920px, 100%);
+      border: 1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      border-radius: 18px;
+      padding: clamp(22px, 4vw, 42px);
+      backdrop-filter: blur(10px);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: conic-gradient(from 180deg,
+        rgba(0,245,255,.0),
+        rgba(0,245,255,.45),
+        rgba(255,61,242,.45),
+        rgba(124,77,255,.35),
+        rgba(0,245,255,.0)
+      );
+      filter: blur(16px);
+      opacity:.35;
+      z-index:0;
+    }
+    .card > *{position:relative; z-index:1}
+
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom: 18px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      font-size: 12px;
+      letter-spacing:.12em;
+      text-transform: uppercase;
+      color: rgba(230,241,255,.85);
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.25);
+    }
+    .dot{
+      width:8px; height:8px; border-radius:50%;
+      background: var(--green);
+      box-shadow: 0 0 14px rgba(0,255,154,.65);
+      animation: pulse 1.2s infinite ease-in-out;
+    }
+    @keyframes pulse{
+      0%,100%{transform:scale(1); opacity:.7}
+      50%{transform:scale(1.6); opacity:1}
+    }
+
+    .meta{
+      font-size: 12px;
+      color: rgba(230,241,255,.6);
+      display:flex;
+      gap:16px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .meta code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      color: rgba(230,241,255,.8);
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.12);
+      padding: 6px 8px;
+      border-radius: 10px;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: clamp(18px, 3vw, 28px);
+      align-items:center;
+    }
+    @media (max-width: 860px){
+      .hero{grid-template-columns:1fr}
+      .meta{justify-content:flex-start}
+    }
+
+    /* Glitch 404 */
+    .glitch{
+      font-size: clamp(56px, 10vw, 120px);
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: .06em;
+      margin: 6px 0 10px;
+      position:relative;
+      text-shadow:
+        0 0 16px rgba(0,245,255,.25),
+        0 0 32px rgba(255,61,242,.12);
+    }
+    .glitch::before,
+    .glitch::after{
+      content: attr(data-text);
+      position:absolute; inset:0;
+      opacity:.85;
+      mix-blend-mode: screen;
+      clip-path: inset(0 0 0 0);
+    }
+    .glitch::before{
+      color: var(--cyan);
+      transform: translate(2px,0);
+      animation: glitchTop 2.1s infinite linear alternate-reverse;
+    }
+    .glitch::after{
+      color: var(--pink);
+      transform: translate(-2px,0);
+      animation: glitchBot 1.6s infinite linear alternate-reverse;
+    }
+    @keyframes glitchTop{
+      0%{clip-path: inset(0 0 80% 0)}
+      10%{clip-path: inset(0 0 60% 0); transform:translate(3px,-1px)}
+      20%{clip-path: inset(0 0 70% 0); transform:translate(1px,1px)}
+      30%{clip-path: inset(0 0 40% 0); transform:translate(4px,0)}
+      40%{clip-path: inset(0 0 65% 0); transform:translate(2px,-2px)}
+      50%{clip-path: inset(0 0 78% 0); transform:translate(0,0)}
+      60%{clip-path: inset(0 0 55% 0); transform:translate(2px,1px)}
+      70%{clip-path: inset(0 0 68% 0); transform:translate(3px,2px)}
+      80%{clip-path: inset(0 0 45% 0); transform:translate(1px,-1px)}
+      90%{clip-path: inset(0 0 72% 0); transform:translate(4px,0)}
+      100%{clip-path: inset(0 0 62% 0); transform:translate(2px,1px)}
+    }
+    @keyframes glitchBot{
+      0%{clip-path: inset(80% 0 0 0)}
+      10%{clip-path: inset(60% 0 0 0); transform:translate(-3px,1px)}
+      20%{clip-path: inset(70% 0 0 0); transform:translate(-1px,-1px)}
+      30%{clip-path: inset(40% 0 0 0); transform:translate(-4px,0)}
+      40%{clip-path: inset(65% 0 0 0); transform:translate(-2px,2px)}
+      50%{clip-path: inset(78% 0 0 0); transform:translate(0,0)}
+      60%{clip-path: inset(55% 0 0 0); transform:translate(-2px,-1px)}
+      70%{clip-path: inset(68% 0 0 0); transform:translate(-3px,-2px)}
+      80%{clip-path: inset(45% 0 0 0); transform:translate(-1px,1px)}
+      90%{clip-path: inset(72% 0 0 0); transform:translate(-4px,0)}
+      100%{clip-path: inset(62% 0 0 0); transform:translate(-2px,-1px)}
+    }
+
+    .title{
+      margin: 0 0 10px;
+      font-size: clamp(18px, 2.6vw, 26px);
+      color: rgba(230,241,255,.92);
+      letter-spacing:.02em;
+    }
+    .desc{
+      margin: 0 0 18px;
+      color: rgba(230,241,255,.68);
+      max-width: 52ch;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .btn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.28);
+      color: rgba(230,241,255,.9);
+      padding: 12px 14px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight: 600;
+      letter-spacing:.02em;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease, box-shadow .15s ease;
+      user-select:none;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(0,245,255,.35);
+      box-shadow: 0 0 0 4px rgba(0,245,255,.12), 0 0 24px rgba(0,245,255,.18);
+    }
+    .btn.primary{
+      border-color: rgba(255,61,242,.35);
+      background: linear-gradient(180deg, rgba(255,61,242,.22), rgba(0,245,255,.10));
+      box-shadow: 0 0 0 4px rgba(255,61,242,.10), 0 0 30px rgba(255,61,242,.16);
+    }
+    .btn.primary:hover{
+      border-color: rgba(255,61,242,.6);
+      box-shadow: 0 0 0 4px rgba(255,61,242,.14), 0 0 40px rgba(0,245,255,.16);
+    }
+
+    .panel{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.25);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .panel h3{
+      margin: 0 0 10px;
+      font-size: 13px;
+      letter-spacing:.12em;
+      text-transform: uppercase;
+      color: rgba(230,241,255,.75);
+    }
+    .kv{
+      display:grid;
+      grid-template-columns: 110px 1fr;
+      gap:10px 12px;
+      font-size: 13px;
+      color: rgba(230,241,255,.72);
+    }
+    .kv b{
+      color: rgba(230,241,255,.9);
+      font-weight: 650;
+    }
+    .path{
+      word-break: break-all;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      color: rgba(0,245,255,.85);
+      text-shadow: 0 0 12px rgba(0,245,255,.18);
+    }
+
+    .footer{
+      margin-top: 14px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      color: rgba(230,241,255,.55);
+      font-size: 12px;
+    }
+    a{color:inherit}
+  </style>
+</head>
+<body>
+  <div class="grid" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+  <canvas id="fx"></canvas>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="top">
+        <div class="badge">
+          <span class="dot"></span>
+          系统状态: <span style="color: rgba(0,255,154,.95)">在线</span>
+        </div>
+        <div class="meta">
+          <span>追踪ID <code id="trace"></code></span>
+          <span>北京时间 <code id="utc"></code></span>
+        </div>
+      </div>
+
+      <div class="hero">
+        <div>
+          <div class="glitch" data-text="404">404</div>
+          <h1 class="title">你似乎闯入了不存在的扇区</h1>
+          <p class="desc">
+            请求的页面没有找到，可能已被移动、删除，或你输入的地址出现了偏差。
+            你可以返回首页，或回到上一页继续探索。
+          </p>
+
+          <div class="actions">
+            <button class="btn primary" id="homeBtn">返回首页</button>
+            <button class="btn" id="backBtn">返回上一页</button>
+            <button class="btn" id="copyBtn">复制当前链接</button>
+          </div>
+
+          <div class="footer">
+            <span>提示：按 <code style="padding:2px 6px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:rgba(0,0,0,.25)">R</code> 重新加载</span>
+            <span>© <span id="year"></span> 如初的网盘</span>
+          </div>
+        </div>
+
+        <aside class="panel">
+          <h3>诊断信息</h3>
+          <div class="kv">
+            <b>状态码</b><span>HTTP 404</span>
+            <b>访问路径</b><span class="path" id="path"></span>
+            <b>来源页面</b><span id="ref"></span>
+            <b>客户端信息</b><span id="ua"></span>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // --- 基本信息 ---
+    const $ = (s)=>document.querySelector(s);
+    $("#year").textContent = new Date().getFullYear();
+    $("#path").textContent = location.pathname + location.search + location.hash;
+    $("#ref").textContent = document.referrer ? document.referrer : "直接访问 / 未知来源";
+    $("#ua").textContent = navigator.userAgent;
+
+    const rand = (n=8)=>Array.from({length:n},()=>Math.floor(Math.random()*16).toString(16)).join("");
+    $("#trace").textContent = rand(12).toUpperCase();
+    
+    // 改为显示东八区时间（北京时间）
+    const tickCST = ()=> {
+      const now = new Date();
+      // 转换为东八区时间字符串
+      const cstTime = now.toLocaleString('zh-CN', { 
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).replace(/\//g, '-').replace(/\s+/, ' ');
+      $("#utc").textContent = cstTime;
+    };
+    tickCST(); setInterval(tickCST, 1000);
+
+    $("#homeBtn").onclick = ()=> location.href = "/";
+    $("#backBtn").onclick = ()=> history.length > 1 ? history.back() : (location.href="/");
+    $("#copyBtn").onclick = async ()=> {
+      try{
+        await navigator.clipboard.writeText(location.href);
+        $("#copyBtn").textContent = "已复制 ✓";
+        setTimeout(()=> $("#copyBtn").textContent = "复制当前链接", 1200);
+      }catch(e){
+        prompt("复制失败，请手动复制：", location.href);
+      }
+    };
+
+    // 键盘快捷键：R 重新加载 / H 回到首页 / B 返回上一页
+    window.addEventListener("keydown",(e)=>{
+      if(e.key==="r"||e.key==="R") location.reload();
+      if(e.key==="h"||e.key==="H") location.href="/";
+      if(e.key==="b"||e.key==="B") history.back();
+    });
+
+    // --- 粒子特效（鼠标跟随）---
+    const canvas = document.getElementById("fx");
+    const ctx = canvas.getContext("2d");
+    let w,h,dpr;
+    function resize(){
+      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      w = canvas.width = Math.floor(innerWidth * dpr);
+      h = canvas.height = Math.floor(innerHeight * dpr);
+      canvas.style.width = innerWidth + "px";
+      canvas.style.height = innerHeight + "px";
+    }
+    addEventListener("resize", resize); resize();
+
+    const particles = [];
+    const maxParticles = 160;
+    let mx = innerWidth/2, my = innerHeight/2;
+    addEventListener("mousemove", (e)=>{ mx=e.clientX; my=e.clientY; }, {passive:true});
+    addEventListener("touchmove", (e)=>{
+      const t = e.touches[0];
+      if(t){ mx=t.clientX; my=t.clientY; }
+    }, {passive:true});
+
+    function spawn(x,y){
+      if(particles.length > maxParticles) particles.splice(0, particles.length - maxParticles);
+      const count = 3 + Math.floor(Math.random()*3);
+      for(let i=0;i<count;i++){
+        const a = Math.random()*Math.PI*2;
+        const sp = 0.4 + Math.random()*1.6;
+        particles.push({
+          x:(x*dpr), y:(y*dpr),
+          vx:Math.cos(a)*sp*dpr,
+          vy:Math.sin(a)*sp*dpr,
+          r:(1.2 + Math.random()*2.4)*dpr,
+          life: 40 + Math.random()*40,
+          hue: Math.random()<0.5 ? 185 : 305
+        });
+      }
+    }
+
+    function step(){
+      ctx.clearRect(0,0,w,h);
+
+      // 淡淡的光晕
+      const grd = ctx.createRadialGradient(mx*dpr, my*dpr, 0, mx*dpr, my*dpr, 220*dpr);
+      grd.addColorStop(0, "rgba(0,245,255,.14)");
+      grd.addColorStop(0.5, "rgba(255,61,242,.08)");
+      grd.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = grd;
+      ctx.fillRect(0,0,w,h);
+
+      // 自动生成粒子
+      spawn(mx + (Math.random()*10-5), my + (Math.random()*10-5));
+
+      // 绘制粒子
+      for(let i=particles.length-1;i>=0;i--){
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.98;
+        p.vy *= 0.98;
+        p.life -= 1;
+
+        const alpha = Math.max(0, Math.min(1, p.life/80));
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${p.hue}, 100%, 65%, ${alpha})`;
+        ctx.shadowColor = `hsla(${p.hue}, 100%, 60%, ${alpha})`;
+        ctx.shadowBlur = 18*dpr;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fill();
+
+        if(p.life <= 0) particles.splice(i,1);
+      }
+
+      requestAnimationFrame(step);
+    }
+    step();
+  </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "176170-xyz-comments",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for handling comments with D1 database",
+  "main": "worker.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "migrate": "node migrate.js"
+  },
+  "keywords": [
+    "cloudflare",
+    "worker",
+    "d1",
+    "comments"
+  ],
+  "author": "",
+  "license": "MIT"
+}

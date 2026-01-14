@@ -1,0 +1,2 @@
+INSERT INTO comments (name, content, ip, location, date, approved, reply, reply_date) 
+            VALUES ('QQ:393541670', '求帮忙做一个地板补丁', NULL, NULL, '2025-10-07T07:35:59.081Z', 1, '网盘里不是有好几款地砖嘛', NULL);

@@ -1,0 +1,5 @@
+# 精准匹配 /data/database.json
+/data/database.json
+  Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate
+  Expires: 0
+  Surrogate-Control: no-store

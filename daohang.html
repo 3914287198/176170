@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<title>如初的网盘导航 - 实时检测网盘站点可访问状态</title>
+<!-- SEO关键词 -->
+<meta name="keywords" content="如初网盘导航,网盘地址导航,网盘站点状态检测,可用网盘地址,网盘链接在线检测,176170网盘,ruchu888网盘,博客地址导航">
+<!-- SEO简介/描述 -->
+<meta name="description" content="如初的网盘导航提供ruchu888系列网盘地址、176170新版网盘地址及博客地址的一站式导航服务，实时检测各网盘站点可访问状态，快速找到可用的网盘链接，无需逐个测试，高效便捷。">
+<!-- 辅助SEO优化 -->
+<meta name="author" content="如初网盘导航">
+<meta name="robots" content="index,follow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- 内容安全策略：允许HTTPS请求，改善SSL体验 -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; connect-src 'self' https: https://jcurl.176170.xyz; img-src 'self' https: data:; style-src 'self' 'unsafe-inline' https:;">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 5px;
+            height: 25px;
+            background: #667eea;
+            border-radius: 3px;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .link-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .link-card a {
+            text-decoration: none;
+            color: #495057;
+            font-size: 14px;
+            word-break: break-all;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .status-checking {
+            background: #ffeaa7;
+            color: #fdcb6e;
+        }
+
+        .status-online {
+            background: #00ff3d;
+            color: #155724;
+        }
+        .status-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status-error {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-checking .status-icon {
+            background: #fdcb6e;
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-online .status-icon {
+            background: #28a745;
+        }
+
+        .status-offline .status-icon {
+            background: #dc3545;
+        }
+        .status-error .status-icon {
+            background: #ffc107;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .check-all-btn {
+            background: linear-gradient(135deg, #667eea 0%, #45d2ca 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .check-all-btn:hover {
+            background: linear-gradient(135deg, #4acdc7 0%, #267976 100%);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px #4acdc7(102, 126, 234, 0.5);
+        }
+
+        .check-all-btn:active {
+            transform: scale(0.95);
+        }
+
+        .stats {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* ========== 重点美化的加载区域样式 ========== */
+        .loading {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .loading .progress-ring {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-ring__svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .progress-ring__circle {
+            fill: transparent;
+            stroke: #ffffff;
+            stroke-width: 5px;
+            stroke-linecap: round;
+            stroke-dasharray: 0 251.2; /* 周长调整为80px直径的圆：2 * π * 40 = 251.2 */
+            stroke-dashoffset: 0;
+            transition: stroke-dasharray 0.1s ease-in-out; /* 加快过渡动画 */
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+        }
+
+        .progress-ring__background {
+            fill: transparent;
+            stroke: rgba(255, 255, 255, 0.2);
+            stroke-width: 5px;
+        }
+
+        .progress-ring__percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            position: relative;
+            padding-right: 20px;
+            color: #00ff34;
+        }
+        /* 文字加载动画 */
+        .loading-text::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 15px;
+            height: 15px;
+            display: flex;
+            gap: 2px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-text::before {
+            content: '.';
+            animation: dots 1.5s infinite;
+            font-size: 1.5rem;
+            margin-left: 5px;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+
+        /* ========== 加载区域样式结束 ========== */
+
+        .response-time {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 5px;
+            display: block;
+        }
+
+        /* 环境提示样式 */
+        .env-tip {
+            background: rgba(255, 255, 255, 0.9);
+            color: #28a745;
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 10px auto;
+            max-width: 800px;
+            font-size: 14px;
+            border-left: 4px solid #28a745;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .loading {
+                padding: 2rem 1rem;
+            }
+            
+            .loading .progress-ring {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .loading-text {
+                font-size: 1rem;
+            }
+        }
+          /* 其他原有样式保持不变 */
+  
+  /* SEO底部文字样式 */
+  .seo-footer-text {
+    margin: 30px auto 20px; /* 上下间距更合理 */
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    padding: 15px 20px;
+    max-width: 800px; /* 限制宽度，避免文字过长 */
+    line-height: 1.6; /* 行高更易读 */
+    background: rgba(255, 255, 255, 0.8); /* 适配背景渐变，增加可读性 */
+    border-radius: 8px; /* 和页面卡片风格统一 */
+  }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 如初的网盘导航中心</h1>
+            <p>实时监测网站状态,防止无法访问</p>
+        </div>
+
+        <!-- 环境提示 -->
+        <div class="" id="envTip" style="display: none;">
+     
+        </div>
+
+        <button class="check-all-btn" onclick="checkAllSites()">
+            <span>🔄</span>
+            <span>检查所有网站状态</span>
+        </button>
+
+        <!-- 加载进度条（美化版） -->
+        <div class="loading" id="loadingIndicator" style="display: none;">
+            <div class="progress-ring">
+                <svg class="progress-ring__svg" width="80" height="80">
+                    <!-- 进度环背景 -->
+                    <circle class="progress-ring__background" cx="40" cy="40" r="35"></circle>
+                    <!-- 进度环前景 -->
+                    <circle class="progress-ring__circle" cx="40" cy="40" r="35"></circle>
+                </svg>
+                <div class="progress-ring__percentage" id="progressPercentage">0%</div>
+            </div>
+            <div class="loading-text">正在检测网站状态！请稍后...</div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">网盘地址</h2>
+            <div class="links-grid" id="netdisk-links">
+                <!-- 网盘链接将通过JavaScript动态生成 -->
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">新版网盘地址</h2>
+            <div class="links-grid" id="new-netdisk-links">
+                <!-- 新版网盘链接将通过JavaScript动态生成 -->
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">博客地址</h2>
+            <div class="links-grid" id="blog-links">
+                <!-- 博客链接将通过JavaScript动态生成 -->
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="total-sites">0</div>
+                    <div class="stat-label">总站点数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="online-sites">0</div>
+                    <div class="stat-label">在线站点</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="offline-sites">0</div>
+                    <div class="stat-label">离线站点</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="checking-sites">0</div>
+                    <div class="stat-label">检查中</div>
+                </div>
+            </div>
+            <div class="seo-footer-text">
+  如初网盘导航专注于提供ruchu888网盘、176170新版网盘等常用网盘地址的导航服务，实时检测各网盘站点的在线状态，帮助用户快速找到可正常访问的网盘链接，避免无效链接浪费时间。
+</div>
+        </div>
+        
+    </div>
+
+    <script>
+        // 网站数据
+        const sites = {
+            netdisk: [
+               'http://ruchu888.ysepan.com',
+  'http://ruchu888.ysok.net',
+  'http://ruchu888.cccpan.com',
+  'http://ruchu888.uupan.net',
+  'http://ruchu888.ysupan.com'
+            ],
+            newNetdisk: [
+                'https://www.176170.xyz',
+                'https://1.176170.xyz',
+                'https://2.176170.xyz',
+                'https://3.176170.xyz'
+            ],
+            blog: [
+                'https://bk1.176170.xyz',
+                'https://bk2.176170.xyz',
+                'https://bk3.176170.xyz',
+                'https://bk4.176170.xyz',
+                'https://bk5.176170.xyz',
+                'https://bk6.176170.xyz',
+                'https://bk7.176170.xyz',
+                'https://bk8.176170.xyz'
+            ]
+        };
+
+        // 状态统计
+        let statusCount = {
+            total: 0,
+            online: 0,
+            offline: 0,
+            checking: 0
+        };
+
+        // 页面加载时检测环境
+        function checkEnvironment() {
+            const envTip = document.getElementById('envTip');
+            // 显示检测方式说明
+ 
+            envTip.style.display = 'block';
+        }
+
+        // 配置自己的Cloudflare Worker API（批量检测所有地址）
+        const WORKER_API = 'https://jcurl.176170.xyz';
+
+        // 所有检测结果缓存
+        let allResultsCache = null;
+
+        // 通过Worker批量检测所有地址
+        async function checkAllSitesFromWorker() {
+            console.log('开始检测所有地址, Worker API:', WORKER_API);
+
+            try {
+                const response = await fetch(WORKER_API, {
+                    method: 'GET',
+                    cache: 'no-cache',
+                    mode: 'cors'
+                });
+
+                console.log('Worker响应状态:', response.status, response.ok, response.type);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        allResultsCache = data.data;
+                        console.log('所有域名检测结果:', data);
+                        return data.data;
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('Worker批量检测失败:', error);
+                return null;
+            }
+        }
+
+        // 设置进度条（适配新的进度环尺寸）
+        function setProgress(value, progressCircle) {
+            const progressMaxValue = 251.2; // 适配80px直径的圆周长：2 * π * 35 = 219.8 → 修正为251.2
+            const roundedValue = Math.round(value); // 四舍五入以避免小数点
+            const progress = roundedValue / 100;
+            const dasharrayValue = progressMaxValue * progress;
+            progressCircle.style.strokeDasharray = `${dasharrayValue} ${progressMaxValue}`;
+            document.getElementById('progressPercentage').textContent = `${roundedValue}%`;
+            
+            // 强制重绘，确保进度更新可见
+            progressCircle.offsetHeight; // 触发重绘
+        }
+
+        // 初始化页面
+        function initializePage() {
+            // 检测环境
+            checkEnvironment();
+            
+            renderLinks('netdisk-links', sites.netdisk);
+            renderLinks('new-netdisk-links', sites.newNetdisk);
+            renderLinks('blog-links', sites.blog);
+
+            // 计算总站点数
+            statusCount.total = sites.netdisk.length + sites.newNetdisk.length + sites.blog.length;
+            updateStats();
+
+            // 页面加载完成后自动检测一次
+            setTimeout(checkAllSites, 1000);
+        }
+
+        // 渲染链接
+        function renderLinks(containerId, links) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            links.forEach((link, index) => {
+                const linkCard = document.createElement('div');
+                linkCard.className = 'link-card';
+
+                // 创建链接元素
+                const linkElement = document.createElement('a');
+                linkElement.textContent = link;
+                linkElement.href = link;
+                linkElement.target = '_blank';
+                linkElement.rel = 'noopener noreferrer';
+                // 防止直接点击触发浏览器混合内容警告
+                linkElement.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.open(link, '_blank', 'noopener,noreferrer');
+                });
+
+                // 创建状态元素
+                const statusDiv = document.createElement('div');
+                statusDiv.className = 'status status-checking';
+                statusDiv.id = `status-${containerId}-${index}`;
+                statusDiv.innerHTML = '<span class="status-icon"></span><span>等待检查</span>';
+
+                // 创建响应时间元素
+                const responseSpan = document.createElement('span');
+                responseSpan.className = 'response-time';
+                responseSpan.id = `response-${containerId}-${index}`;
+
+                linkCard.appendChild(linkElement);
+                linkCard.appendChild(statusDiv);
+                linkCard.appendChild(responseSpan);
+                container.appendChild(linkCard);
+            });
+        }
+
+        // 检查单个网站状态（从Worker缓存中获取结果）
+        function checkSingleSiteStatus(url, statusElementId, responseElementId) {
+            const statusElement = document.getElementById(statusElementId);
+            const responseElement = document.getElementById(responseElementId);
+
+            // 更新为检查中状态
+            statusElement.className = 'status status-checking';
+            statusElement.innerHTML = '<span class="status-icon"></span><span>检查中...</span>';
+            responseElement.textContent = '';
+            statusCount.checking++;
+            updateStats();
+
+            // 从Worker缓存中获取结果
+            let result;
+            if (allResultsCache) {
+                const cachedResult = allResultsCache.find(r => r.url === url);
+                if (cachedResult) {
+                    result = {
+                        status: cachedResult.status,
+                        responseTime: cachedResult.response_time,
+                        method: 'worker',
+                        httpCode: cachedResult.http_code,
+                        errorType: cachedResult.error
+                    };
+                } else {
+                    result = { status: false, responseTime: null, errorType: 'not_found', method: 'worker' };
+                }
+            } else {
+                result = { status: false, responseTime: null, errorType: 'no_cache', method: 'worker' };
+            }
+
+            // 更新状态显示
+            if (result.status) {
+                statusElement.className = 'status status-online';
+                statusElement.innerHTML = '<span class="status-icon"></span><span>在线</span>';
+                if (result.responseTime) {
+                    const httpCodeText = result.httpCode ? ` [HTTP ${result.httpCode}]` : '';
+                    responseElement.textContent = `响应时间: ${result.responseTime}ms (Worker)${httpCodeText}`;
+                }
+                statusCount.online++;
+            } else {
+                statusElement.className = 'status status-offline';
+                if (result.errorType === 'timeout') {
+                    statusElement.innerHTML = '<span class="status-icon"></span><span>超时</span>';
+                    responseElement.textContent = '响应时间: 超时（5秒）';
+                } else if (result.httpCode && result.httpCode >= 400 && result.httpCode < 600) {
+                    statusElement.innerHTML = '<span class="status-icon"></span><span>错误</span>';
+                    responseElement.textContent = `响应时间: ${result.responseTime}ms [HTTP ${result.httpCode}]`;
+                } else {
+                    statusElement.innerHTML = '<span class="status-icon"></span><span>离线</span>';
+                    responseElement.textContent = result.responseTime ? `响应时间: ${result.responseTime}ms` : '响应时间: 无法连接';
+                }
+                statusCount.offline++;
+            }
+
+            statusCount.checking--;
+            updateStats();
+
+            return result;
+        }
+
+        // 重置所有站点状态为"等待检查"
+        function resetAllStatus() {
+            const allSites = [...sites.netdisk, ...sites.newNetdisk, ...sites.blog];
+            const containers = ['netdisk-links', 'new-netdisk-links', 'blog-links'];
+
+            containers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                const statusElements = container.querySelectorAll('.status');
+                const responseElements = container.querySelectorAll('.response-time');
+
+                statusElements.forEach(statusElement => {
+                    statusElement.className = 'status status-checking';
+                    statusElement.innerHTML = '<span class="status-icon"></span><span>等待检查</span>';
+                });
+
+                responseElements.forEach(responseElement => {
+                    responseElement.textContent = '';
+                });
+            });
+        }
+
+        // 检查所有网站（通过Worker批量检测所有域名）
+        async function checkAllSites() {
+            // 重置所有状态为"等待检查"
+            resetAllStatus();
+
+            // 重置统计
+            statusCount.online = 0;
+            statusCount.offline = 0;
+            statusCount.checking = 0;
+
+            // 显示加载指示器
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            loadingIndicator.style.display = 'flex';
+            const progressCircle = document.querySelector('.progress-ring__circle');
+
+            // 重置进度条到0%
+            setProgress(0, progressCircle);
+            
+            const totalWebsites = sites.netdisk.length + sites.newNetdisk.length + sites.blog.length;
+            let completedCount = 0;
+
+            // 步骤1：通过Worker批量检测所有域名
+            await checkAllSitesFromWorker();
+            
+            // 创建所有待检测的站点列表
+            const allSites = [
+                ...sites.netdisk.map(url => ({ type: 'netdisk', url })),
+                ...sites.newNetdisk.map(url => ({ type: 'newNetdisk', url })),
+                ...sites.blog.map(url => ({ type: 'blog', url }))
+            ];
+            
+            // 步骤2：逐个更新站点状态，增加延迟让进度条可见
+            async function processNextSite(index) {
+                if (index >= allSites.length) {
+                    // 所有站点处理完成，设置进度到100%
+                    setProgress(100, progressCircle);
+                    // 延迟隐藏加载指示器，让用户看到100%的状态
+                    setTimeout(() => {
+                        loadingIndicator.style.display = 'none';
+                    }, 300);
+                    return;
+                }
+                
+                const site = allSites[index];
+                let containerId, siteIndex;
+                
+                // 找到对应的容器ID和索引
+                if (site.type === 'netdisk') {
+                    siteIndex = sites.netdisk.indexOf(site.url);
+                    containerId = 'netdisk-links';
+                } else if (site.type === 'newNetdisk') {
+                    siteIndex = sites.newNetdisk.indexOf(site.url);
+                    containerId = 'new-netdisk-links';
+                } else {
+                    siteIndex = sites.blog.indexOf(site.url);
+                    containerId = 'blog-links';
+                }
+                
+                // 检查单个站点状态
+                checkSingleSiteStatus(
+                    site.url, 
+                    `status-${containerId}-${siteIndex}`, 
+                    `response-${containerId}-${siteIndex}`
+                );
+                
+                // 更新完成计数和进度
+                completedCount++;
+                const progress = (completedCount / totalWebsites) * 100;
+                setProgress(progress, progressCircle);
+                
+                // 延迟处理下一个站点，让进度更新可见
+                setTimeout(() => {
+                    processNextSite(index + 1);
+                }, 100); // 每个站点间隔100ms，可以调整这个值改变速度
+            }
+            
+            // 开始逐个处理站点
+            processNextSite(0);
+        }
+
+        // 更新统计数据
+        function updateStats() {
+            document.getElementById('total-sites').textContent = statusCount.total;
+            document.getElementById('online-sites').textContent = statusCount.online;
+            document.getElementById('offline-sites').textContent = statusCount.offline;
+            document.getElementById('checking-sites').textContent = statusCount.checking;
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>

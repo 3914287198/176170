@@ -1,0 +1,10 @@
+npx wrangler deploy worker.js
+npx wrangler pages deploy .
+
+npx wrangler pages deploy . --branch main
+
+git  add.
+git commit -m "备份"
+
+# 直接丢弃所有未提交的修改（包括暂存区和工作区）
+git checkout .
