@@ -58,7 +58,7 @@ compatibility_date = "2024-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "176170_xyz"
-database_id = "a5ca1d3c-844a-4bac-9a81-b77ee9b39fad"
+database_id = "a5ca1d3c-8********1-b77ee9b39fad"
 ```
 
 ## API 接口
@@ -67,13 +67,12 @@ database_id = "a5ca1d3c-844a-4bac-9a81-b77ee9b39fad"
 
 #### 获取留言列表
 ```
-GET https://mir.de5.net/api/comments?page=1&limit=10
+GET https:// 
 ```
 
 #### 提交留言
 ```
-POST https://mir.de5.net/api/comments
-Content-Type: application/json
+
 
 {
   "name": "QQ:123456",
@@ -85,28 +84,11 @@ Content-Type: application/json
 
 #### 审核留言
 ```
-POST https://mir.de5.net/api/comments/{id}/approve
+POST https://mir.de5.ne 
 Authorization: Bearer {token}
 ```
 
-#### 编辑留言
-```
-PUT https://mir.de5.net/api/comments/{id}/edit
-Authorization: Bearer {token}
-Content-Type: application/json
-
-{
-  "content": "新内容",
-  "approved": true
-}
-```
-
-#### 回复留言
-```
-POST https://mir.de5.net/api/comments/{id}/reply
-Authorization: Bearer {token}
-Content-Type: application/json
-
+## 
 {
   "reply": "回复内容"
 }
@@ -114,16 +96,12 @@ Content-Type: application/json
 
 #### 删除留言
 ```
-DELETE https://mir.de5.net/api/comments/{id}
-Authorization: Bearer {token}
-```
+D
 
 ### 后台管理
 
 #### 管理员登录
-```
-POST https://mir.de5.net/api/admin/login
-Content-Type: application/json
+
 
 {
   "username": "admin",
@@ -133,32 +111,21 @@ Content-Type: application/json
 
 #### 备份留言
 ```
-GET https://mir.de5.net/api/admin/backup
+
 Authorization: Bearer {token}
 ```
 
 #### 还原留言
-```
-POST https://mir.de5.net/api/admin/restore
-Authorization: Bearer {token}
-Content-Type: application/json
-
-{
-  "comments": [...]
-}
-```
-
-### 其他接口
+``` 
 
 #### 获取地理位置
 ```
-GET https://mir.de5.net/api/location?ip=1.2.3.4
+GET ht 
 ```
 
 #### 统计信息
 ```
-GET https://mir.de5.net/api/comments?action=replied-count
-GET https://mir.de5.net/api/comments?action=pending-count
+
 ```
 
 ## 功能特性
@@ -222,12 +189,7 @@ npm install
 ```
 
 2. 配置环境变量：
-```bash
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=admin123
-DINGTALK_ACCESS_TOKEN=your_token
-DINGTALK_SECRET=your_secret
-```
+ 
 
 3. 启动本地服务器（如果需要）：
 ```bash
@@ -276,3 +238,4 @@ npx wrangler deploy
 - ✅ 后台留言列表分页显示，每页10条
 - ✅ 删除所有测试功能、文件、代码和 console 日志
 - ✅ 整合所有文档，记录 mir.de5.net 配置
+
