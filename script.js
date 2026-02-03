@@ -13,6 +13,7 @@ let pendingComments = []; // 用于存储用户刚提交但还未在列表中显
 let currentSource = 'lanzou';
 const sourceMap = {
     'lanzou': './data/database.json',
+     'lanzouyx': './data/lanzouyx.json',
     'haiwai': './data/haiwai.json',
     'baidu': './data/baidu.json',
     'gongyi': './data/gongyi.json'
