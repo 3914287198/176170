@@ -606,13 +606,13 @@
                "children": [
                   {
                      "createdAt": "2026-02-25 12:30",
-                     "name": "大地砖-新增猪洞、僵尸洞、骷髅洞、蜈蚣洞、魔龙【强烈推荐】",
+                     "name": "大地砖-新增猪洞、僵尸洞、骷髅洞、蜈蚣洞、魔龙【修复花屏】【强烈推荐】",
                      "type": "file",
                      "url": "https://down.176170.xyz/chuanqibuding/%E5%A4%A7%E5%9C%B0%E7%A0%96-%E6%96%B0%E5%A2%9E%E7%8C%AA%E6%B4%9E%E3%80%81%E5%83%B5%E5%B0%B8%E6%B4%9E%E3%80%81%E9%AA%B7%E9%AB%85%E6%B4%9E%E3%80%81%E8%9C%88%E8%9A%A3%E6%B4%9E%E3%80%81%E9%AD%94%E9%BE%99%E7%AD%89%E6%89%80%E6%9C%89%E5%9C%B0%E5%9B%BE%E3%80%90%E5%BC%BA%E7%83%88%E6%8E%A8%E8%8D%90%E3%80%91.rar"
                   },
                   {
                      "createdAt": "2026-02-25 12:30",
-                     "name": "小地砖-新增猪洞、僵尸洞、骷髅洞、蜈蚣洞、魔龙【强烈推荐】",
+                     "name": "小地砖-新增猪洞、僵尸洞、骷髅洞、蜈蚣洞、魔龙【修复花屏】【强烈推荐】",
                      "type": "file",
                      "url": "https://down.176170.xyz/chuanqibuding/%E5%B0%8F%E5%9C%B0%E7%A0%96-%E6%96%B0%E5%A2%9E%E7%8C%AA%E6%B4%9E%E3%80%81%E5%83%B5%E5%B0%B8%E6%B4%9E%E3%80%81%E9%AA%B7%E9%AB%85%E6%B4%9E%E3%80%81%E8%9C%88%E8%9A%A3%E6%B4%9E%E3%80%81%E9%AD%94%E9%BE%99%E7%AD%89%E6%89%80%E6%9C%89%E5%9C%B0%E5%9B%BE%E3%80%90%E5%BC%BA%E7%83%88%E6%8E%A8%E8%8D%90%E3%80%91.rar"
                   },
@@ -735,6 +735,18 @@
             {
                "children": [
                   {
+                     "createdAt": "2026-03-02 13:00",
+                     "name": "99%地图简化仙人球-【大地砖】新增僵尸骷髅洞，合并沙影魔龙",
+                     "type": "file",
+                     "url": "https://down.176170.xyz/chuanqibuding/99%25%E5%9C%B0%E5%9B%BE%E7%AE%80%E5%8C%96%E4%BB%99%E4%BA%BA%E7%90%83-%E3%80%90%E5%A4%A7%E5%9C%B0%E7%A0%96%E3%80%91%E6%96%B0%E5%A2%9E%E5%83%B5%E5%B0%B8%E9%AA%B7%E9%AB%85%E6%B4%9E%EF%BC%8C%E5%90%88%E5%B9%B6%E6%B2%99%E5%BD%B1%E9%AD%94%E9%BE%99.rar"
+                  },
+                  {
+                     "createdAt": "2026-03-02 13:00",
+                     "name": "99%地图简化仙人球-【小地砖】新增僵尸骷髅洞，合并沙影魔龙",
+                     "type": "file",
+                     "url": "https://down.176170.xyz/chuanqibuding/99%25%E5%9C%B0%E5%9B%BE%E7%AE%80%E5%8C%96%E4%BB%99%E4%BA%BA%E7%90%83-%E3%80%90%E5%B0%8F%E5%9C%B0%E7%A0%96%E3%80%91%E6%96%B0%E5%A2%9E%E5%83%B5%E5%B0%B8%E9%AA%B7%E9%AB%85%E6%B4%9E%EF%BC%8C%E5%90%88%E5%B9%B6%E6%B2%99%E5%BD%B1%E9%AD%94%E9%BE%99.rar"
+                  },
+                  {
                      "createdAt": "2026-01-05 14:40",
                      "name": "竖版地砖仙人球简化（新增几十款火龙服地图）",
                      "type": "file",
@@ -745,18 +757,6 @@
                      "name": "各大城市地图简化仙人球（比奇盟重白日门封魔苍月魔龙）【修复已知BUG】",
                      "type": "file",
                      "url": "https://down.176170.xyz/chuanqibuding/%E5%90%84%E5%A4%A7%E5%9F%8E%E5%B8%82%E5%9C%B0%E5%9B%BE%E7%AE%80%E5%8C%96%E4%BB%99%E4%BA%BA%E7%90%83%EF%BC%88%E6%AF%94%E5%A5%87%E7%9B%9F%E9%87%8D%E7%99%BD%E6%97%A5%E9%97%A8%E5%B0%81%E9%AD%94%E8%8B%8D%E6%9C%88%E9%AD%94%E9%BE%99%EF%BC%89%E3%80%90%E4%BF%AE%E5%A4%8D%E5%B7%B2%E7%9F%A5BUG%E3%80%91.rar"
-                  },
-                  {
-                     "createdAt": "2025-12-12 13:10",
-                     "name": "95%地图简化仙球-【小地砖】熬夜修复所有BUGV4.0",
-                     "type": "file",
-                     "url": "https://down.176170.xyz/chuanqibuding/95%25%E5%9C%B0%E5%9B%BE%E7%AE%80%E5%8C%96%E4%BB%99%E7%90%83-%E3%80%90%E5%B0%8F%E5%9C%B0%E7%A0%96%E3%80%91%E7%86%AC%E5%A4%9C%E4%BF%AE%E5%A4%8D%E6%89%80%E6%9C%89BUGV4.0.rar"
-                  },
-                  {
-                     "createdAt": "2025-12-12 13:10",
-                     "name": "95%地图简化仙球-【大地砖】熬夜修复所有BUGV4.0",
-                     "type": "file",
-                     "url": "https://down.176170.xyz/chuanqibuding/95%25%E5%9C%B0%E5%9B%BE%E7%AE%80%E5%8C%96%E4%BB%99%E7%90%83-%E3%80%90%E5%A4%A7%E5%9C%B0%E7%A0%96%E3%80%91%E7%86%AC%E5%A4%9C%E4%BF%AE%E5%A4%8D%E6%89%80%E6%9C%89BUGV4.0.rar"
                   },
                   {
                      "createdAt": "2025-9-2",
@@ -781,18 +781,6 @@
                      "name": "封魔地图半简化【去碎石替换障碍物为仙人球其他不变】【内有效果图】",
                      "type": "file",
                      "url": "https://down.176170.xyz/chuanqibuding/%E5%B0%81%E9%AD%94%E5%9C%B0%E5%9B%BE%E5%8D%8A%E7%AE%80%E5%8C%96%E3%80%90%E5%8E%BB%E7%A2%8E%E7%9F%B3%E6%9B%BF%E6%8D%A2%E9%9A%9C%E7%A2%8D%E7%89%A9%E4%B8%BA%E4%BB%99%E4%BA%BA%E7%90%83%E5%85%B6%E4%BB%96%E4%B8%8D%E5%8F%98%E3%80%91%E3%80%90%E5%86%85%E6%9C%89%E6%95%88%E6%9E%9C%E5%9B%BE%E3%80%91.rar"
-                  },
-                  {
-                     "createdAt": "2025-6-17",
-                     "name": "魔龙所有地图简化仙人球补丁",
-                     "type": "file",
-                     "url": "https://down.176170.xyz/chuanqibuding/%E9%AD%94%E9%BE%99%E6%89%80%E6%9C%89%E5%9C%B0%E5%9B%BE%E7%AE%80%E5%8C%96%E4%BB%99%E4%BA%BA%E7%90%83%E8%A1%A5%E4%B8%81.rar"
-                  },
-                  {
-                     "createdAt": "2025-6-17",
-                     "name": "幻境1-10 沙影1-宝阁仙人球简化",
-                     "type": "file",
-                     "url": "https://down.176170.xyz/chuanqibuding/%E5%B9%BB%E5%A2%831-10%20%E6%B2%99%E5%BD%B11-%E5%AE%9D%E9%98%81%E4%BB%99%E4%BA%BA%E7%90%83%E7%AE%80%E5%8C%96.rar"
                   },
                   {
                      "createdAt": "2025-6-15",
