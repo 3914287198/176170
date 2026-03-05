@@ -62,6 +62,63 @@
                "type": "folder",
                "url": ""
             },
+                        {
+               "children": [
+                  {
+                     "createdAt": "2026-03-04 20:20",
+                     "name": "施法框+称号+激光+刺杀V4.6【施法框一键设置。傻瓜式操作，支持任意分辨率】",
+                     "type": "file",
+                     "url": "https://pan.baidu.com/s/1_b1PwBi5ZX-hNop1xh3ZYQ?pwd=cqbd"
+                  },
+                  {
+                     "createdAt": "2026-02-13 13:13",
+                     "name": "补丁安装神器（支持批量安装）V3.0",
+                     "type": "file",
+                     "url": "https://pan.baidu.com/s/17QEcXDn6oYV3UJvOQUk9mw?pwd=cqbd"
+                  },
+                  {
+                     "createdAt": "2026-02-13 13:13",
+                     "name": "补一键安装（禁止微端更新)V3.0-某动画片可用",
+                     "type": "file",
+                     "url": "https://pan.baidu.com/s/1JJKny5Xc3iVH69MDVog-Xg?pwd=cqbd"
+                  },
+                  {
+                     "createdAt": "2026-02-13 13:13",
+                     "name": "战士双烈火计时器V1.9【带声音提示】【还可以当称号使用】【不会被检测】",
+                     "type": "file",
+                     "url": "https://pan.baidu.com/s/15iiMjz9nQ7CLvAdmTIcrNQ?pwd=cqbd"
+                  },
+                  {
+                     "createdAt": "2026-02-13 13:13",
+                     "name": "一键小退。一键交易V2.9【右键管理员运行】【不保证是否封号】【新增在线自动更新】",
+                     "type": "file",
+                     "url": "https://pan.baidu.com/s/19BQe2dGlgoX6YzX7BfN-BQ?pwd=cqbd"
+                  },
+                  {
+                     "createdAt": "2026-02-13 13:13",
+                     "name": "一键小退。一键交易V2.9【右键管理员运行】【第二种写法】【不保证是否封号】【新增在线自动更新】",
+                     "type": "file",
+                     "url": "https://pan.baidu.com/s/18OS4XC_uVXFdHmVUesDd2w?pwd=cqbd"
+                  },
+                  {
+                     "createdAt": "2024-9-9",
+                     "name": "GM工具箱-资源编辑器v3.8.0---NPC教程用到的工具",
+                     "type": "file",
+                     "url": "https://pan.baidu.com/s/1D4cVMR4IrKzv-77ARNQ9gg?pwd=cqbd"
+                  },
+                  {
+                     "createdAt": "2024-9-9",
+                     "name": "WZL编辑器2017_0830.rar补丁制作（转换补丁格式）",
+                     "type": "file",
+                     "url": "https://pan.baidu.com/s/1VG4t7Y-cl2P_7tPWK2zYPw?pwd=cqbd"
+                  }
+               ],
+               "expanded": false,
+               "name": "辅助类相关工具下载（易语言编写部分杀毒会报毒）",
+               "note": "部分杀毒会误报毒。介意勿下载",
+               "type": "folder",
+               "url": ""
+            },
             {
                "children": [
                   {
@@ -542,63 +599,6 @@
                "expanded": false,
                "name": "蓝盾、小火墙、小冰咆哮 等技能类 补丁-",
                "note": "【技能补丁专区】",
-               "type": "folder",
-               "url": ""
-            },
-            {
-               "children": [
-                  {
-                     "createdAt": "2026-02-13 13:13",
-                     "name": "施法框+称号+激光+刺杀V4.5【施法框一键设置。傻瓜式操作，支持任意分辨率】",
-                     "type": "file",
-                     "url": "https://pan.baidu.com/s/1SYRS2gTHYHTbRbS53_HCIA?pwd=cqbd"
-                  },
-                  {
-                     "createdAt": "2026-02-13 13:13",
-                     "name": "补丁安装神器（支持批量安装）V3.0",
-                     "type": "file",
-                     "url": "https://pan.baidu.com/s/17QEcXDn6oYV3UJvOQUk9mw?pwd=cqbd"
-                  },
-                  {
-                     "createdAt": "2026-02-13 13:13",
-                     "name": "补一键安装（禁止微端更新)V3.0-某动画片可用",
-                     "type": "file",
-                     "url": "https://pan.baidu.com/s/1JJKny5Xc3iVH69MDVog-Xg?pwd=cqbd"
-                  },
-                  {
-                     "createdAt": "2026-02-13 13:13",
-                     "name": "战士双烈火计时器V1.9【带声音提示】【还可以当称号使用】【不会被检测】",
-                     "type": "file",
-                     "url": "https://pan.baidu.com/s/15iiMjz9nQ7CLvAdmTIcrNQ?pwd=cqbd"
-                  },
-                  {
-                     "createdAt": "2026-02-13 13:13",
-                     "name": "一键小退。一键交易V2.9【右键管理员运行】【不保证是否封号】【新增在线自动更新】",
-                     "type": "file",
-                     "url": "https://pan.baidu.com/s/19BQe2dGlgoX6YzX7BfN-BQ?pwd=cqbd"
-                  },
-                  {
-                     "createdAt": "2026-02-13 13:13",
-                     "name": "一键小退。一键交易V2.9【右键管理员运行】【第二种写法】【不保证是否封号】【新增在线自动更新】",
-                     "type": "file",
-                     "url": "https://pan.baidu.com/s/18OS4XC_uVXFdHmVUesDd2w?pwd=cqbd"
-                  },
-                  {
-                     "createdAt": "2024-9-9",
-                     "name": "GM工具箱-资源编辑器v3.8.0---NPC教程用到的工具",
-                     "type": "file",
-                     "url": "https://pan.baidu.com/s/1D4cVMR4IrKzv-77ARNQ9gg?pwd=cqbd"
-                  },
-                  {
-                     "createdAt": "2024-9-9",
-                     "name": "WZL编辑器2017_0830.rar补丁制作（转换补丁格式）",
-                     "type": "file",
-                     "url": "https://pan.baidu.com/s/1VG4t7Y-cl2P_7tPWK2zYPw?pwd=cqbd"
-                  }
-               ],
-               "expanded": false,
-               "name": "辅助类相关工具下载（易语言编写部分杀毒会报毒）",
-               "note": "部分杀毒会误报毒。介意勿下载",
                "type": "folder",
                "url": ""
             },
