@@ -534,12 +534,45 @@
                      "name": "紫圈火。蓝盾。小冰不碍眼补丁",
                      "type": "file",
                      "url": "https://pan.baidu.com/s/1m-gxLexa7TZ0T99CCHtetA?pwd=cqbd"
+                  }
+               ],
+               "expanded": false,
+               "name": "蓝盾、小火墙、小冰咆哮 等技能类 补丁-",
+               "note": "【技能补丁专区】",
+               "type": "folder",
+               "url": ""
+            },
+            {
+               "children": [
+                  {
+                     "createdAt": "2026-03-20 07:50",
+                     "name": "九款道士飓风破技能补丁",
+                     "type": "file",
+                     "url": "https://pan.baidu.com/s/14iJlr07kscdNMgtfUXJe9w?pwd=9v71"
                   },
                   {
-                     "createdAt": "2025-09-07 09:14",
-                     "name": "〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓↓↓↓↓↓↓开天斩流星火雨↓↓↓↓↓↓〓〓〓〓〓〓〓〓〓〓〓〓〓〓〓",
-                     "type": "divider",
-                     "url": "〓"
+                     "createdAt": "2026-03-19 13:30",
+                     "name": "九款流星火雨技能补丁【内有效果图】",
+                     "type": "file",
+                     "url": "https://pan.baidu.com/s/1tIsTYT2V9efOBg1jvYcXtg?pwd=9pm3"
+                  },
+                  {
+                     "createdAt": "2026-03-18 12:48",
+                     "name": " 十几款【流星火雨】特效技能内有效果图",
+                     "type": "file",
+                     "url": "https://pan.baidu.com/s/19QBOwqTioE82neOH96TQLw?pwd=7e9j"
+                  },
+                  {
+                     "createdAt": "2026-03-19 13:58",
+                     "name": "三款整理出来的流星火雨",
+                     "type": "file",
+                     "url": "https://pan.baidu.com/s/1eXRCrSsiOGdLGLRA3lzbyQ?pwd=b2mw"
+                  },
+                  {
+                     "createdAt": "2026-03-19 12:51",
+                     "name": "四款整理出来的开天斩",
+                     "type": "file",
+                     "url": "https://pan.baidu.com/s/19pjlCQuF53b86zbq9iW9Fg?pwd=si92"
                   },
                   {
                      "createdAt": "2025-7-31",
@@ -597,7 +630,7 @@
                   }
                ],
                "expanded": false,
-               "name": "蓝盾、小火墙、小冰咆哮 等技能类 补丁-",
+               "name": "流星火雨开天斩飓风破等火龙服补丁",
                "note": "【技能补丁专区】",
                "type": "folder",
                "url": ""
@@ -734,14 +767,14 @@
             {
                "children": [
                   {
-                     "createdAt": "2026-03-16 10:00",
-                     "name": "99%地图简化仙人球-【大地砖】新增僵尸骷髅洞，合并沙影魔龙",
+                     "createdAt": "2026-03-16 15:27",
+                     "name": "99%地图简化仙人球-【大地砖】新增僵尸骷髅洞，合并沙影魔龙-修复花屏",
                      "type": "file",
                      "url": "https://pan.baidu.com/s/1fHHng4db4N7WGeVSEN42oA?pwd=m1hp"
                   },
                   {
-                     "createdAt": "2026-03-16 10:00",
-                     "name": "99%地图简化仙人球-【小地砖】新增僵尸骷髅洞，合并沙影魔龙",
+                     "createdAt": "2026-03-16 15:27",
+                     "name": "99%地图简化仙人球-【小地砖】新增僵尸骷髅洞，合并沙影魔龙-修复花屏",
                      "type": "file",
                      "url": "https://pan.baidu.com/s/1yZLWsrCMmUSGRBkXgYwa5Q?pwd=3e6t"
                   },
@@ -1153,6 +1186,12 @@
             },
             {
                "children": [
+                  {
+                     "createdAt": "2026-03-19 13:31",
+                     "name": "消除神兽攻击声+雷电术声音改一声",
+                     "type": "file",
+                     "url": "https://pan.baidu.com/s/18Jj3SIZi4UWy9cNKriDusQ?pwd=qynq"
+                  },
                   {
                      "createdAt": "2025-12-02 14:50",
                      "name": "真气醒目（真+~万宇",
