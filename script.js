@@ -60,18 +60,31 @@ function useDefaultFiles() {
     // 从database.json获取失败时，使用一些示例数据
     files = [
         {
-            name: '示例文件夹',
+            name: '加载中。。。请耐心等待或刷新页面',
             type: 'folder',
             url: '#',
-            note: '这是一个示例文件夹',
+            note: '载中。。。请耐心等待或刷新页面',
             children: [
-                { name: '示例文件.txt', type: 'file', url: '#', createdAt: '2024-01-01' }
+                { name: '请耐心等待或刷新页面.txt', type: 'file', url: '#', createdAt: '2024-01-01' },
+                
+            ],
+            expanded: false
+        },
+                {
+            name: '如果等待时间过长。请点这里的地址..',
+            type: 'folder',
+            url: '#',
+            note: '载中。。。请耐心等待或刷新页面',
+            children: [
+                { name: '点我跳转....', type: 'file', url: 'http://ruchu888.ysepan.com', createdAt: '2024-01-01' },
+                
             ],
             expanded: false
         }
     ];
     filteredFiles = [...files]; // 初始化过滤后的文件列表
 }
+
 
 function renderFileList() {
     const fileList = document.getElementById('fileList');
@@ -591,8 +604,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    const adCloseButtons = document.querySelectorAll('.floating-ad .close-btn');
+    adCloseButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const ad = this.closest('.floating-ad');
+            if (ad) {
+                ad.style.display = 'none';
+            }
+        });
+    });
+    
     // 定期刷新文件列表以确保同步
-    setInterval(fetchFiles, 120000); // 每120秒刷新一次
+    setInterval(fetchFiles, 180000);
     
     // 初始化加载：先加载文件列表，然后再加载留言信息
     async function initializePage() {
@@ -610,22 +635,22 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // 从database.json获取留言列表
-async function fetchComments(page = 1) {
+async function fetchComments(page = 1, force = false) {
     // 检查是否使用 Cloudflare D1
     const useCloudflareD1 = typeof USE_CLOUDFLARE_D1 !== 'undefined' && USE_CLOUDFLARE_D1;
     
     if (useCloudflareD1) {
-        await fetchCommentsFromD1(page);
+        await fetchCommentsFromD1(page, force);
     } else {
-        await fetchCommentsFromLocal(page);
+        await fetchCommentsFromLocal(page, force);
     }
 }
 
 // 从 Cloudflare D1 获取留言
-async function fetchCommentsFromD1(page = 1) {
+async function fetchCommentsFromD1(page = 1, force = false) {
     // 检查缓存
     const cacheKey = `page_${page}`;
-    if (commentsCache.has(cacheKey)) {
+    if (!force && commentsCache.has(cacheKey)) {
         const cachedData = commentsCache.get(cacheKey);
         comments = cachedData.comments;
         currentPage = cachedData.currentPage;
@@ -635,6 +660,9 @@ async function fetchCommentsFromD1(page = 1) {
         renderCommentsStats();
         renderPagination();
         return;
+    }
+    if (force && commentsCache.has(cacheKey)) {
+        commentsCache.delete(cacheKey);
     }
     
     // 避免重复请求
@@ -706,10 +734,10 @@ async function fetchCommentsFromD1(page = 1) {
 }
 
 // 从本地 database.json 获取留言
-async function fetchCommentsFromLocal(page = 1) {
+async function fetchCommentsFromLocal(page = 1, force = false) {
     // 检查缓存
     const cacheKey = `page_${page}`;
-    if (commentsCache.has(cacheKey)) {
+    if (!force && commentsCache.has(cacheKey)) {
         const cachedData = commentsCache.get(cacheKey);
         comments = cachedData.comments;
         currentPage = cachedData.currentPage;
@@ -719,6 +747,9 @@ async function fetchCommentsFromLocal(page = 1) {
         renderCommentsStats();
         renderPagination();
         return;
+    }
+    if (force && commentsCache.has(cacheKey)) {
+        commentsCache.delete(cacheKey);
     }
     
     // 避免重复请求
@@ -1737,13 +1768,15 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             // 页面显示时重新启动定时器
             if (!filesRefreshInterval) {
-                filesRefreshInterval = setInterval(fetchFiles, 600000); // 每60秒刷新一次
+                filesRefreshInterval = setInterval(fetchFiles, 180000);
             }
         }
     });
     
     // 初始设置定时器
-    filesRefreshInterval = setInterval(fetchFiles, 600000); // 每60秒刷新一次
+    filesRefreshInterval = setInterval(fetchFiles, 180000);
+    
+    let commentsRefreshInterval = setInterval(() => { fetchComments(1, true); }, 120000);
     
     // 添加联系方式类型变化事件监听器
     const contactTypeSelect = document.getElementById('contactType');
@@ -1873,7 +1906,7 @@ function setupCommentRefresh() {
             // 如果收到刷新消息，重新获取留言列表
             if (event.data === 'admin-reply') {
                 
-                fetchComments(1); // 从第一页开始刷新
+                fetchComments(1, true); // 从第一页开始刷新
                 // 不立即关闭 channel，以便后续可以继续接收消息
             }
         };
@@ -1885,7 +1918,7 @@ window.addEventListener('message', function(event) {
     // 检查消息类型
     if (event.data && event.data.type === 'admin-reply') {
         
-        fetchComments(1); // 从第一页开始刷新
+        fetchComments(1, true); // 从第一页开始刷新
     }
 });
 
@@ -1894,7 +1927,7 @@ const adminReplied = localStorage.getItem('adminReplied');
 if (adminReplied === 'true') {
     // 如果有管理员回复标记，刷新留言列表
     
-    fetchComments(1); // 从第一页开始刷新
+    fetchComments(1, true); // 从第一页开始刷新
     // 清除标记
     localStorage.removeItem('adminReplied');
     
