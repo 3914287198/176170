@@ -617,7 +617,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // 定期刷新文件列表以确保同步
-    setInterval(fetchFiles, 180000);
+    setInterval(fetchFiles, 300000);
     
     // 初始化加载：先加载文件列表，然后再加载留言信息
     async function initializePage() {
@@ -880,7 +880,7 @@ function renderComments() {
         // 如果有IP地址，尝试获取地理位置信息
         let locationInfo = '';
         if (comment.location && comment.location !== '未知' && comment.location !== '') {
-          // 显示格式：来自 XX省XX市
+          // 显示格式： XX省XX市
           locationInfo = `来自 ${comment.location} 的 `;
         }
         // 如果没有地理位置信息，不显示任何位置信息
@@ -900,6 +900,8 @@ function renderComments() {
           contactIcon = '<i class="fa fa-weixin mr-1 text-gray-400" aria-hidden="true"></i>';
         } else if (contactType === '邮箱') {
           contactIcon = '<i class="fa fa-envelope mr-1 text-gray-400" aria-hidden="true"></i>';
+        } else if (contactType === 'YY') {
+          contactIcon = '<i class="fa fa-microphone mr-1 text-gray-400" aria-hidden="true"></i>';
         }
 
         // 如果是未回复的留言，只显示位置、名称和时间，不显示内容和联系方式
@@ -999,7 +1001,7 @@ function renderComments() {
                             </div>
                         </div>
                         <div class="comment-item-reply-content">
-                            <p class="text-gray-700 text-sm leading-tight">
+                            <p class="text-sm leading-tight" style="color: #1D6F99 ;">
                                 ${comment.reply ? comment.reply.replace(/\\n/g, '<br>') : ''}
                             </p>
                         </div>
@@ -1513,6 +1515,11 @@ async function submitComment(event) {
             showCommentStatus('请输入有效的邮箱地址', 'error');
             return;
         }
+    } else if (contactType === 'YY') {
+        if (!/^\d{5,}$/.test(contactInfo.trim())) {
+            showCommentStatus('请输入有效的YY号码（至少5位数字）', 'error');
+            return;
+        }
     }
     
     // 验证留言内容长度（至少3个字）
@@ -1768,15 +1775,15 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             // 页面显示时重新启动定时器
             if (!filesRefreshInterval) {
-                filesRefreshInterval = setInterval(fetchFiles, 180000);
+                filesRefreshInterval = setInterval(fetchFiles, 300000);
             }
         }
     });
     
     // 初始设置定时器
-    filesRefreshInterval = setInterval(fetchFiles, 180000);
+    filesRefreshInterval = setInterval(fetchFiles, 300000);
     
-    let commentsRefreshInterval = setInterval(() => { fetchComments(1, true); }, 120000);
+    let commentsRefreshInterval = setInterval(() => { fetchComments(1, true); }, 180000);
     
     // 添加联系方式类型变化事件监听器
     const contactTypeSelect = document.getElementById('contactType');
@@ -1788,7 +1795,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const placeholders = {
             'QQ': '请输入您的QQ号码（5-15位数字）',
             '微信': '请输入您的微信号（6-20位）',
-            '邮箱': '请输入您的邮箱地址'
+            '邮箱': '请输入您的邮箱地址',
+            'YY': '请输入您的YY号码（至少5位数字）'
         };
 
         if (contactType && placeholders[contactType]) {
@@ -1829,6 +1837,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         message = 'QQ号码格式错误（5-15位数字，不能以0开头）';
                     }
                     break;
+                case 'YY':
+                    if (/^\d{5,}$/.test(contactValue)) {
+                        isValid = true;
+                        message = 'YY号码格式正确';
+                    } else if (contactValue.length === 0) {
+                        message = '请输入您的YY号码（至少5位数字）';
+                    } else {
+                        message = 'YY号码格式错误（至少5位数字）';
+                    }
+                    break;
                 case '微信':
                     if (/^[a-zA-Z0-9_-]{6,20}$/.test(contactValue) && !/^\d+$/.test(contactValue)) {
                         isValid = true;
@@ -1854,6 +1872,8 @@ document.addEventListener('DOMContentLoaded', function() {
             contactInfoHelp.textContent = message;
             contactInfoHelp.style.color = isValid ? 'green' : 'red';
         }
+
+        updateContactInfoPlaceholderAndHelp(contactTypeSelect.value);
 
         contactInfoInput.addEventListener('input', function() {
             validateContactInfo();
