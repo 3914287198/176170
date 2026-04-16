@@ -71,10 +71,10 @@
                      "url": "https://ruchu888.lanzn.com/iWhfQ3kqm8lg"
                   },
                   {
-                     "createdAt": "2026-04-02 14:30",
-                     "name": "一键安装—支持批量安装V3.3",
+                     "createdAt": "2026-04-03 21:30",
+                     "name": "补丁一键安装神器—支持批量安装V3.4",
                      "type": "file",
-                     "url": "https://ruchu888.lanzn.com/iDhAW3m7n59a"
+                     "url": "https://ruchu888.lanzn.com/ipWp33mctjcd"
                   },
                   {
                      "createdAt": "2026-02-13 13:13",
@@ -421,12 +421,12 @@
             },
             {
                "children": [
-                  {
-                     "createdAt": "2026-03-23 11:48",
-                     "name": "全套盛大技能改彩色技能",
-                     "type": "file",
-                     "url": "https://ruchu888.lanzn.com/iMMSg3lb102j"
-                  },
+                  { 
+                      "createdAt": "2026-04-10 08:48", 
+                      "name": "全套盛大技能改彩色技能（修复坐标）", 
+                      "type": "file", 
+                      "url": "https://ruchu888.lanzn.com/iC7883mw3t3i" 
+                   },
                   {
                      "createdAt": "2025-12-16 23:28",
                      "name": "  绿圈火墙-透明冰-其他不变",
@@ -550,6 +550,18 @@
             },
             {
                "children": [
+                  { 
+                     "createdAt": "2026-04-15 15:31", 
+                     "name": "二十二款流星火雨3级。支持四级强化火雨", 
+                     "type": "file", 
+                     "url": "https://ruchu888.lanzn.com/ifkGM3nbcouj" 
+                  },
+                  {
+                     "createdAt": "2026-04-08 14:50",
+                     "name": "十一款强化火墙【只有强化火墙。其他不变】",
+                     "type": "file",
+                     "url": "https://ruchu888.lanzn.com/iBQNc3mrdk3e"
+                  },
                   {
                      "createdAt": "2026-03-26 21:50",
                      "name": "流星火雨。飓风破简化技能",
@@ -561,18 +573,6 @@
                      "name": "九款道士飓风破技能补丁",
                      "type": "file",
                      "url": "https://ruchu888.lanzn.com/igJwl3l17hkf"
-                  },
-                  {
-                     "createdAt": "2026-03-19 13:30",
-                     "name": "九款流星火雨技能补丁【内有效果图】",
-                     "type": "file",
-                     "url": "https://ruchu888.lanzn.com/ii2Px3kz7i7g"
-                  },
-                  {
-                     "createdAt": "2026-03-18 12:48",
-                     "name": " 十几款【流星火雨】特效技能内有效果图",
-                     "type": "file",
-                     "url": "https://ruchu888.lanzn.com/iNp7p3kw91zg"
                   },
                   {
                      "createdAt": "2026-03-19 13:58",
@@ -785,25 +785,45 @@
             },
             {
                "children": [
-                  { 
-                      "createdAt": "2026-04-02 14:30", 
-                      "name": "300个地图【仙人球简化】---【大地砖】-第四次修改", 
-                      "type": "file", 
-                      "url": "https://ruchu888.lanzn.com/ibtf53m7n95a" 
-                   }, 
+                     { 
+                        "createdAt": "2026-04-14 12:22", 
+                        "name": "300个地图【仙人球简化】---【竖版地砖】-【地砖黑屏换这个】【新增个别地图】】", 
+                        "type": "file", 
+                        "url": "https://ruchu888.lanzn.com/i8DJF3n816mj" 
+                     }, 
+  	  	  	  	  	  	  	  	  
+                     { 
+                        "createdAt": "2026-04-14 12:22", 
+                        "name": "300个地图【仙人球简化】---【大地砖】-【地砖黑屏换这个】【新增个别地图】", 
+                        "type": "file", 
+                        "url": "https://ruchu888.lanzn.com/inuui3n81dla" 
+                     }, 
+  	  	  	  	  	  	  	  	  
+                     { 
+                        "createdAt": "2026-04-14 12:22", 
+                        "name": "300个地图【仙人球简化】---【小地砖】-【地砖黑屏换这个】【新增个别地图】", 
+                        "type": "file", 
+                        "url": "https://ruchu888.lanzn.com/is4e13n81afg" 
+                     }, 
+ 	 	 	 	 	 	 	 	 
                    { 
-                      "createdAt": "2026-04-02 14:30", 
-                      "name": "300个地图【仙人球简化】----【小地砖】-第四次修改", 
-                      "type": "file", 
-                      "url": "https://ruchu888.lanzn.com/iU21N3m7n4xi" 
-                   }, 
-                   { 
-                      "createdAt": "2026-04-02 14:30", 
-                      "name": "300个地图【仙人球简化】---【竖版地砖】-第四次修改", 
-                      "type": "file", 
-                      "url": "https://ruchu888.lanzn.com/i8ocx3m7myhg" 
-                   },
-
+                       "createdAt": "2026-04-14 12:56", 
+                       "name": "300个地图【仙人球简化】---【竖版地砖】-【复古服专用】【第九次修改】", 
+                       "type": "file", 
+                       "url": "https://ruchu888.lanzn.com/iNQqt3n81iod" 
+                    }, 
+                    { 
+                       "createdAt": "2026-04-14 12:56", 
+                       "name": "300个地图【仙人球简化】---【大地砖】-【复古服专用】【第九次修改】", 
+                       "type": "file", 
+                       "url": "https://ruchu888.lanzn.com/iDDUB3n81gjg" 
+                    }, 
+                    { 
+                       "createdAt": "2026-04-14 12:56", 
+                       "name": "300个地图【仙人球简化】---【小地砖】-【复古服专用】【第九次修改】", 
+                       "type": "file", 
+                       "url": "https://ruchu888.lanzn.com/iLMmU3n81lif" 
+                    },
                   {
                      "createdAt": "2025-9-2",
                      "name": "各大地图小地图点位标记--新增封魔殿猪7死亡棺材",
