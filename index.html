@@ -41,6 +41,14 @@
     <!-- Font Awesome -->
     <link href="assets/lib/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://176170.176170.xyz" crossorigin>
+    <link rel="dns-prefetch" href="//176170.176170.xyz">
+    <link rel="preconnect" href="https://sdk.51.la" crossorigin>
+    <link rel="dns-prefetch" href="//sdk.51.la">
+    <link rel="preconnect" href="https://myhkw.cn" crossorigin>
+    <link rel="dns-prefetch" href="//myhkw.cn">
+    <link rel="dns-prefetch" href="//www.clarity.ms">
+
     <!-- Structured Data -->
     <script type="application/ld+json">
     {
@@ -237,7 +245,6 @@
                                     </div>
                                 </div>
 
-
                                 <div id="commentsList" class="mb-4">
                                     <div class="text-center py-5">
                                         <div class="spinner-border text-primary" role="status">
@@ -266,16 +273,16 @@
                                     <div class="mb-3">
                                         <label for="contactType" class="form-label">联系方式类型 <span class="text-danger">*</span></label>
                                         <select class="form-select" id="contactType" required>
-                                            <option value="" selected disabled>请选择联系方式类型</option>
-                                            <option value="QQ">QQ</option>
+                                            <option value="YY" selected>YY号</option>
+                                            <!-- <option value="QQ">QQ(推荐)</option>
                                             <option value="微信">微信</option>
-                                            <option value="邮箱">邮箱</option>
+                                            <option value="邮箱">邮箱</option> -->
                                         </select>
                                     </div>
                                     <div class="mb-3">
                                         <label for="contactInfo" class="form-label">联系方式 <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="contactInfo" 
-                                               placeholder="请输入您的QQ号/微信号/邮箱地址" required>
+                                               placeholder="请输入您的联系方式.建议选择YY号" required>
                                         <div class="form-text" id="contactInfoHelp"></div>
                                     </div>
                                     <div class="mb-3">
@@ -324,7 +331,7 @@
 
                                 </div>
                                 <div class="ad-placeholder bg-light rounded mt-4">
-                                    <a href="http://www.ys168.com/" target="_blank" class="d-block">
+                                    <a href="http://ruchu888.ysepan.com" target="_blank" class="d-block">
                                         <img src="img/gg4.png" alt="永硕E盘" class="ad-image">
                                     </a>
                                 </div>
@@ -377,7 +384,7 @@
     </button>
 
     <!-- Bootstrap 5 JS Bundle -->
-    <script src="assets/lib/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/lib/js/bootstrap.bundle.min.js" defer></script>
     
     <!-- API 配置 -->
     <script>
@@ -389,6 +396,16 @@
 
         // 是否使用 Cloudflare D1 数据库
         const USE_CLOUDFLARE_D1 = true; // 改为 false 使用本地 database.json
+        window.__FILES_DATA_PRELOAD__ = fetch('./data/database.json').then(async response => {
+            if (!response.ok) {
+                throw new Error(`Failed to preload database.json: ${response.status}`);
+            }
+
+            return response.json();
+        }).catch(error => {
+            window.__FILES_DATA_PRELOAD__ = null;
+            throw error;
+        });
     </script>
     
     <!-- 添加消息监听器来刷新文件列表 -->
@@ -404,9 +421,35 @@
         });
     </script>
     
-    <script src="script.js"></script>
-    <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
-<script>LA.init({id:"3NebqluXXya8FLfS",ck:"3NebqluXXya8FLfS"})</script>
-    <script type="text/javascript" id="myhk" src="https://myhkw.cn/api/player/171819249893 [https://myhkw.cn/api/player/171819249893]" key="171819249893" m="1"></script>
+    <script src="script.js" defer></script>
+    <script>
+        window.addEventListener('load', function() {
+            const analyticsScript = document.createElement('script');
+            analyticsScript.charset = 'UTF-8';
+            analyticsScript.id = 'LA_COLLECT';
+            analyticsScript.src = 'https://sdk.51.la/js-sdk-pro.min.js';
+            analyticsScript.onload = function() {
+                if (window.LA) {
+                    LA.init({id:"3NebqluXXya8FLfS",ck:"3NebqluXXya8FLfS"});
+                }
+            };
+            document.body.appendChild(analyticsScript);
+
+            const musicScript = document.createElement('script');
+            musicScript.type = 'text/javascript';
+            musicScript.id = 'myhk';
+            musicScript.src = 'https://myhkw.cn/api/player/171819249893';
+            musicScript.setAttribute('key', '171819249893');
+            musicScript.setAttribute('m', '1');
+            document.body.appendChild(musicScript);
+        });
+    </script>
+    <script>
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "wfkw5himao");
+</script>
 </body>
 </html>

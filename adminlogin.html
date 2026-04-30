@@ -339,11 +339,26 @@
             list.innerHTML = '<div class="loading">加载中...</div>';
 
             try {
-                const res = await fetch(`${API}/comments?page=${currentPage}&limit=10&admin=true`);
+                const statusParam = currentTab === 'pending' ? '&status=pending' : (currentTab === 'approved' ? '&status=approved' : '');
+                const res = await fetch(`${API}/comments?page=${currentPage}&limit=10&admin=true${statusParam}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
                 const data = await res.json();
                 allComments = data.comments || [];
                 totalPages = data.totalPages || 1;
                 totalComments = data.totalComments || 0;
+
+                // Fallback: 如果是“待审核”且返回为空，再请求全部数据并在前端过滤
+                if (currentTab === 'pending' && (!allComments || allComments.length === 0)) {
+                    const resAll = await fetch(`${API}/comments?page=${currentPage}&limit=10&admin=true`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const dataAll = await resAll.json();
+                    const allList = dataAll.comments || [];
+                    allComments = allList.filter(c => !isApprovedStatus(c));
+                    totalPages = dataAll.totalPages || 1;
+                    totalComments = dataAll.totalComments || 0;
+                }
 
                 renderComments();
                 renderPagination();
@@ -353,15 +368,19 @@
             }
         }
 
+        function isApprovedStatus(c) {
+            return c.approved === 1 || c.approved === true || c.approved === '1';
+        }
+
         // 渲染留言
         function renderComments() {
             const list = document.getElementById('commentsList');
             let comments = allComments;
 
             if (currentTab === 'pending') {
-                comments = comments.filter(c => !c.approved);
+                comments = comments.filter(c => !isApprovedStatus(c));
             } else if (currentTab === 'approved') {
-                comments = comments.filter(c => c.approved);
+                comments = comments.filter(c => isApprovedStatus(c));
             }
 
             if (comments.length === 0) {
@@ -374,7 +393,7 @@
             }
 
             list.innerHTML = comments.map(c => {
-                const isApproved = c.approved === 1 || c.approved === true;
+                const isApproved = isApprovedStatus(c);
                 return `
                 <div class="comment-item">
                     <div class="comment-header">
@@ -458,7 +477,8 @@
             currentTab = tab;
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
-            renderComments();
+            currentPage = 1;
+            loadComments();
         }
 
         // 审核
@@ -546,7 +566,7 @@
 
             currentReplyId = id;
             document.getElementById('replyOriginal').textContent = comment.content;
-            document.getElementById('replyContent').value = '';
+            document.getElementById('replyContent').value = comment.reply || '';
             document.getElementById('replyModal').classList.add('show');
         }
 

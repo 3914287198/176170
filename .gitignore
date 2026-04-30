@@ -1,0 +1,10 @@
+# 核心规则：忽略根目录下的整个data文件夹（推荐）
+# 末尾的斜杠/是关键，标识这是一个文件夹，避免误忽略名为data的单个文件
+data/上传专用/
+worker - daohang.js
+worker.js
+wrangler.toml
+# 补充规则：若想忽略data文件夹内所有内容，但保留data文件夹本身（空文件夹）
+# 需先在data文件夹内创建一个空的.gitkeep文件（Git不追踪空文件夹）
+# data/上传专用/*
+# !data/上传专用/.gitkeep

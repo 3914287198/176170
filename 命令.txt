@@ -1,3 +1,4 @@
+
 npx wrangler deploy worker.js
 npx wrangler pages deploy .
 
@@ -8,3 +9,5 @@ git commit -m "备份"
 
 # 直接丢弃所有未提交的修改（包括暂存区和工作区）
 git checkout .
+
+npx http-server -p 8090 -c-1

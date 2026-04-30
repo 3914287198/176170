@@ -4,6 +4,19 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
 // worker.js
 var __defProp2 = Object.defineProperty;
 var __name2 = /* @__PURE__ */ __name((target, value) => __defProp2(target, "name", { value, configurable: true }), "__name");
+
+// 全局变量用于 Worker 内存缓存
+let commentsCache = null;
+let lastUpdated = Date.now();
+
+// 清除缓存的辅助函数
+function clearCache() {
+  commentsCache = null;
+  lastUpdated = Date.now();
+}
+__name(clearCache, "clearCache");
+__name2(clearCache, "clearCache");
+
 var worker_default = {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -28,7 +41,7 @@ var worker_default = {
     }
     if (url.pathname === "/api/comments") {
       if (request.method === "GET") {
-        return handleGetComments(url, env, corsHeaders);
+        return handleGetComments(request, url, env, corsHeaders);
       } else if (request.method === "POST") {
         return handlePostComment(request, env, corsHeaders);
       }
@@ -79,34 +92,57 @@ var worker_default = {
     });
   }
 };
-async function handleGetComments(url, env, corsHeaders) {
+async function handleGetComments(request, url, env, corsHeaders) {
   const page = parseInt(url.searchParams.get("page")) || 1;
   const limit = parseInt(url.searchParams.get("limit")) || 10;
   const action = url.searchParams.get("action");
   const isAdmin = url.searchParams.get("admin") === "true";
   const offset = (page - 1) * limit;
+  let cacheStatus = "HIT";
   try {
+    // 1. 轻量级检查：获取数据库当前状态摘要（只查总数和最大ID，速度极快）
+    const dbStatus = await env.DB.prepare(
+      "SELECT COUNT(*) as total, MAX(id) as lastId FROM comments"
+    ).first();
+    
+    // 2. 校验内存缓存是否仍然有效
+    const isCacheValid = commentsCache && 
+                        commentsCache.length === dbStatus.total && 
+                        (dbStatus.total === 0 || (commentsCache[0] && commentsCache[0].id === dbStatus.lastId));
+
+    // 3. 只有在摘要不匹配时，才重新读取完整数据库
+    if (!isCacheValid) {
+      cacheStatus = "MISS";
+      const all = await env.DB.prepare("SELECT * FROM comments ORDER BY date DESC").all();
+      commentsCache = all.results;
+      lastUpdated = Date.now(); // 只有真正更新数据时才变动时间戳，确保 ETag 有效
+    }
+    
+    // 4. 实现 ETag 校验（仅对列表接口有效，不针对 action）
+    const etag = `"${lastUpdated}"`;
+    if (!action && request.headers.get("If-None-Match") === etag) {
+      return new Response(null, {
+        status: 304,
+        headers: { ...corsHeaders, "ETag": etag, "X-Cache": "HIT-BR" }
+      });
+    }
+
     if (action === "replied-count") {
-      const result = await env.DB.prepare(
-        'SELECT COUNT(*) as count FROM comments WHERE reply IS NOT NULL AND reply != ""'
-      ).first();
-      return new Response(JSON.stringify({ count: result.count }), {
+      const count = commentsCache.filter(c => c.reply && c.reply.trim() !== "").length;
+      return new Response(JSON.stringify({ count }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
     if (action === "pending-count") {
-      const result = await env.DB.prepare(
-        'SELECT COUNT(*) as count FROM comments WHERE reply IS NULL OR reply = ""'
-      ).first();
-      return new Response(JSON.stringify({ count: result.count }), {
+      const count = commentsCache.filter(c => !c.reply || c.reply.trim() === "").length;
+      return new Response(JSON.stringify({ count }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
-    const totalResult = await env.DB.prepare("SELECT COUNT(*) as total FROM comments").first();
-    const comments = await env.DB.prepare(
-      "SELECT * FROM comments ORDER BY date DESC LIMIT ? OFFSET ?"
-    ).bind(limit, offset).all();
-    let processedComments = comments.results;
+
+    const totalComments = commentsCache.length;
+    let processedComments = commentsCache.slice(offset, offset + limit);
+    
     if (!isAdmin) {
       processedComments = processedComments.map((comment) => {
         const maskedName = maskContactName(comment.name);
@@ -114,26 +150,23 @@ async function handleGetComments(url, env, corsHeaders) {
         return {
           ...comment,
           name: maskedName,
-          // 姓名脱敏 QQ:前3位***后4位 / WX:前2位***后2位
           ip: null,
-          // ✅ 关键：隐藏IP地址，返回null不显示
-          // 无回复则隐藏评论内容，有回复则显示完整内容
           content: hasReply ? comment.content : "",
-          // 标记是否需要隐藏
           isHidden: !hasReply
         };
       });
     }
     return new Response(JSON.stringify({
       comments: processedComments,
-      totalComments: totalResult.total,
+      totalComments,
       currentPage: page,
-      totalPages: Math.ceil(totalResult.total / limit)
+      totalPages: Math.ceil(totalComments / limit),
+      cache: cacheStatus
     }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" }
+      headers: { ...corsHeaders, "Content-Type": "application/json", "ETag": etag, "X-Cache": cacheStatus }
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Failed to fetch comments" }), {
+    return new Response(JSON.stringify({ error: "Failed to fetch comments", details: error.message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
@@ -163,8 +196,9 @@ function maskContactName(name) {
       // 微信号：保留前2位和后2位，中间用***代替（例：WX:ab****yz）
       return `${type}:${info.slice(0, 2)}****${info.slice(-2)}`;
     default:
-      // 其他类型：保留前2位和后1位，中间用***代替（例：电话:13****9）
-      return `${type}:${info.slice(0, 2)}****${info.slice(-1)}`;
+      // 其他类型：只隐藏中间的2位数字（例：13800138000 -> 1380**38000）
+      const mid = Math.floor(info.length / 2);
+      return `${type}:${info.slice(0, mid - 1)}**${info.slice(mid + 1)}`;
   }
 }
 __name(maskContactName, "maskContactName");
@@ -193,6 +227,7 @@ async function handlePostComment(request, env, corsHeaders) {
       location || null
     ).run();
     if (insertResult.success) {
+      clearCache();
       const newComment = await env.DB.prepare(
         "SELECT id, name, content, ip, location, date, approved FROM comments WHERE name = ? AND content = ? ORDER BY id DESC LIMIT 1"
       ).bind(name, content).first();
@@ -204,7 +239,7 @@ async function handlePostComment(request, env, corsHeaders) {
       return new Response(JSON.stringify({
         success: true,
         id: commentId,
-        name: newComment?.name,
+        name: maskContactName(newComment?.name),
         content: newComment?.content,
         date: newComment?.date,
         approved: newComment?.approved,
@@ -232,6 +267,7 @@ async function handleApproveComment(commentId, env, corsHeaders) {
     await env.DB.prepare(
       "UPDATE comments SET approved = 1 WHERE id = ?"
     ).bind(commentId).run();
+    clearCache();
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
@@ -257,6 +293,7 @@ async function handleReplyComment(commentId, request, env, corsHeaders) {
     await env.DB.prepare(
       "UPDATE comments SET reply = ?, reply_date = ?, approved = 1 WHERE id = ?"
     ).bind(reply, (/* @__PURE__ */ new Date()).toISOString(), commentId).run();
+    clearCache();
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
@@ -288,6 +325,7 @@ async function handleEditComment(commentId, request, env, corsHeaders) {
     updateSql += " WHERE id = ?";
     params.push(commentId);
     await env.DB.prepare(updateSql).bind(...params).run();
+    clearCache();
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
@@ -344,6 +382,7 @@ async function handleDeleteComment(commentId, env, corsHeaders) {
     await env.DB.prepare(
       "DELETE FROM comments WHERE id = ?"
     ).bind(commentId).run();
+    clearCache();
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
@@ -410,9 +449,10 @@ async function handleRestoreComments(request, env, corsHeaders) {
       } catch (error) {
       }
     }
+    clearCache();
     return new Response(JSON.stringify({
       success: true,
-      message: `\u6210\u529F\u8FD8\u539F ${successCount} \u6761\u7559\u8A00`
+      message: `成功还原 ${successCount} 条留言`
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" }
     });

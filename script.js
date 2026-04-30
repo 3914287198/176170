@@ -10,6 +10,12 @@ let commentsCache = new Map(); // 留言缓存
 let isCommentsLoading = false; // 留言是否正在加载
 let commentsLoadStartTime = 0; // 留言加载开始时间
 let pendingComments = []; // 用于存储用户刚提交但还未在列表中显示的留言
+let filesDataPromise = null;
+let filesDataSource = null;
+let initialFilesLoaded = false;
+let initialCommentsStarted = false;
+let repliedCommentsCountCache = null;
+let pendingCommentsCountCache = null;
 let currentSource = 'lanzou';
 const sourceMap = {
     'lanzou': './data/database.json',
@@ -22,29 +28,19 @@ const sourceMap = {
 // 从database.json获取文件列表
 async function fetchFiles() {
     try {
+        const rawData = await loadFilesData();
+
         // 从DATA目录下的database.json获取文件列表
-        
-        const response = await fetch(sourceMap[currentSource]);
-        
-        
-        if (response.ok) {
-            const rawData = await response.json();
+        if (rawData.files && rawData.files.length > 0 && rawData.files[0].data) {
+            files = rawData.files[0].data;
             
-            
-            // 从json数据中提取files
-            if (rawData.files && rawData.files.length > 0 && rawData.files[0].data) {
-                files = rawData.files[0].data;
-                
-            } else {
-                
-                files = [];
-            }
-            filteredFiles = [...files]; // 初始化过滤后的文件列表
         } else {
             
-            // 如果获取失败，使用默认数据
-            useDefaultFiles();
+            files = [];
         }
+
+        filteredFiles = [...files]; // 初始化过滤后的文件列表
+        initialFilesLoaded = true;
         
         renderFileList();
     } catch (error) {
@@ -53,6 +49,37 @@ async function fetchFiles() {
         useDefaultFiles();
         renderFileList();
     }
+}
+
+async function loadFilesData(force = false) {
+    const sourceUrl = sourceMap[currentSource];
+    const preloadedFilesData = currentSource === 'lanzou' ? window.__FILES_DATA_PRELOAD__ : null;
+
+    if (!force && preloadedFilesData && filesDataSource !== sourceUrl) {
+        filesDataSource = sourceUrl;
+        filesDataPromise = preloadedFilesData.catch(error => {
+            filesDataPromise = null;
+            throw error;
+        });
+    }
+
+    if (!force && filesDataPromise && filesDataSource === sourceUrl) {
+        return filesDataPromise;
+    }
+
+    filesDataSource = sourceUrl;
+    filesDataPromise = fetch(sourceUrl).then(async response => {
+        if (!response.ok) {
+            throw new Error(`Failed to load file data: ${response.status}`);
+        }
+
+        return response.json();
+    }).catch(error => {
+        filesDataPromise = null;
+        throw error;
+    });
+
+    return filesDataPromise;
 }
 
 // 使用默认文件数据（仅在获取database.json失败时使用）
@@ -93,6 +120,11 @@ function renderFileList() {
     if (!fileList) {
         return;
     }
+
+    function getItemKey(item, index, parentKey = 'root') {
+        const itemName = item && item.name ? item.name : `item-${index}`;
+        return `${parentKey}-${index}-${itemName}`;
+    }
     
     fileList.innerHTML = '';
     
@@ -110,10 +142,7 @@ function renderFileList() {
                             <div id="textPreviewContent" style="max-height: 70vh; overflow-y: auto; white-space: pre-wrap; font-family: monospace;"></div>
                             <img id="imagePreviewContent" src="" alt="预览图片" class="img-fluid" style="max-height: 70vh; display: none;">
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                            <a id="downloadFileBtn" href="#" class="btn btn-primary" download>下载文件</a>
-                        </div>
+ 
                     </div>
                 </div>
             </div>
@@ -121,8 +150,9 @@ function renderFileList() {
         document.body.insertAdjacentHTML('beforeend', modalHTML);
     }
     
-    function renderItem(item, index, isChild = false) {
+    function renderItem(item, index, isChild = false, parentKey = 'root') {
         const li = document.createElement('li');
+        const itemKey = getItemKey(item, index, parentKey);
         
         // 根据文件类型添加不同的CSS类
         if (item.type === 'folder') {
@@ -282,7 +312,7 @@ function renderFileList() {
         if (item.type === 'folder') {
             // 文件夹保持原来的图标
             const displayName = item._highlightedName || item.name;
-            displayContent = `<i class="bi ${iconClass}"></i> ${displayName}`;
+            displayContent = `<span class="file-title-wrap"><i class="bi ${iconClass}"></i><span class="file-title-text">${displayName}</span></span>`;
         } else {
             // 文件使用特定图标
             const displayName = item._highlightedName || item.name;
@@ -308,7 +338,7 @@ function renderFileList() {
                 iconSrc = "img/png.png";
             }
             
-            displayContent = `<img src="${iconSrc}" alt="文件图标" style="width: 16px; height: 16px; margin-right: 5px; vertical-align: middle;"> ${displayName}`;
+            displayContent = `<span class="file-title-wrap"><img src="${iconSrc}" alt="文件图标" style="width: 16px; height: 16px; margin-right: 5px; vertical-align: middle;"><span class="file-title-text">${displayName}</span></span>`;
         }
         
         // 如果有备注，添加备注
@@ -352,25 +382,16 @@ function renderFileList() {
             a.href += '/';
             a.addEventListener('click', (e) => {
                 e.preventDefault();
-                // 修改为：允许多个文件夹同时展开，只在点击已展开的文件夹时关闭它
-                const indexInArray = expandedFolderIndices.indexOf(index);
+                const indexInArray = expandedFolderIndices.indexOf(itemKey);
                 if (indexInArray !== -1) {
-                    // 点击已展开的文件夹，从数组中移除（关闭它）
                     expandedFolderIndices.splice(indexInArray, 1);
                 } else {
-                    // 点击未展开的文件夹，添加到数组中（展开它）
-                    expandedFolderIndices.push(index);
+                    expandedFolderIndices.push(itemKey);
                 }
                 renderFileList();
-                
-                // 将被点击的文件夹滚动到视图顶部
-                setTimeout(() => {
-                    li.scrollIntoView({block: 'start', behavior: 'smooth'});
-                }, 100);
             });
         }
         li.appendChild(a);
-        fileList.appendChild(li);
 
         // 检查是否有需要展开的文件夹（从后台添加文件后设置的）
         if (window.expandedFolderIndex !== undefined && window.expandedFolderIndex === index) {
@@ -381,7 +402,7 @@ function renderFileList() {
         // 只有当前文件夹是展开状态时才显示子文件
         // 在搜索模式下，如果文件夹被标记为expanded，则展开它
         const shouldExpand = item.type === 'folder' && 
-                            ((expandedFolderIndices.includes(index)) || 
+                            ((expandedFolderIndices.includes(itemKey)) || 
                              (item.expanded === true));
                              
         if (shouldExpand && item.children) {
@@ -389,9 +410,9 @@ function renderFileList() {
             const childrenArray = Array.isArray(item.children) ? item.children : [];
             if (childrenArray.length > 0) {
                 const ul = document.createElement('ul');
-                ul.className = 'ms-2 mt-1';
+                ul.className = 'folder-children';
                 childrenArray.forEach((child, childIndex) => {
-                    const childLi = renderItem(child, childIndex, true);
+                    const childLi = renderItem(child, childIndex, true, itemKey);
                     ul.appendChild(childLi);
                 });
                 li.appendChild(ul);
@@ -408,7 +429,10 @@ function renderFileList() {
         } else {
             fileList.classList.remove('d-none');
             noFiles.classList.add('d-none');
-            filteredFiles.forEach((item, index) => renderItem(item, index));
+            filteredFiles.forEach((item, index) => {
+                const itemNode = renderItem(item, index);
+                fileList.appendChild(itemNode);
+            });
         }
     } else {
         // 如果不是数组，设置为空数组
@@ -423,12 +447,9 @@ function showFilePreview(fileUrl, fileName, isImage) {
     const modal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
     const textPreviewContent = document.getElementById('textPreviewContent');
     const imagePreviewContent = document.getElementById('imagePreviewContent');
-    const downloadBtn = document.getElementById('downloadFileBtn');
     const modalTitle = document.getElementById('filePreviewModalLabel');
     
-    // 设置下载链接
-    downloadBtn.href = fileUrl;
-    downloadBtn.download = fileName;
+    // 设置标题
     modalTitle.textContent = fileName;
     
     if (isImage) {
@@ -617,7 +638,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // 定期刷新文件列表以确保同步
-    setInterval(fetchFiles, 300000);
+    setInterval(fetchFiles, 300000000);
     
     // 初始化加载：先加载文件列表，然后再加载留言信息
     async function initializePage() {
@@ -636,6 +657,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 从database.json获取留言列表
 async function fetchComments(page = 1, force = false) {
+    if (!initialFilesLoaded) {
+        await fetchFiles();
+    }
+
+    if (page === 1 && !force) {
+        initialCommentsStarted = true;
+    }
+
     // 检查是否使用 Cloudflare D1
     const useCloudflareD1 = typeof USE_CLOUDFLARE_D1 !== 'undefined' && USE_CLOUDFLARE_D1;
     
@@ -791,7 +820,7 @@ async function fetchCommentsFromLocal(page = 1, force = false) {
         
         if (response.ok) {
             const rawData = await response.json();
-            
+
             // 从json数据中提取comments
             let allComments = rawData.comments || [];
             
@@ -872,8 +901,8 @@ function renderComments() {
         if (comment.name.includes(':')) {
           const [type, infoRaw] = comment.name.split(':', 2);
           contactType = type;
-          // 首页后端已经返回了隐藏后的数据（QQ:***），直接使用
-          contactInfo = infoRaw === '***' ? '***' : maskContactInfo(infoRaw);
+          // 首页后端已经返回了隐藏后的数据，直接使用，不再前端二次隐藏
+          contactInfo = infoRaw;
           contactDisplay = '访客';
         }
 
@@ -1015,21 +1044,6 @@ function renderComments() {
     });
     
     // 添加留言项的动画效果
-    const commentItems = document.querySelectorAll('.bg-white.rounded-lg.p-4');
-    commentItems.forEach((item, index) => {
-        // 添加延迟，创建逐个出现的效果
-        setTimeout(() => {
-            item.style.opacity = '0';
-            item.style.transform = 'translateY(20px)';
-            item.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-            
-            // 触发动画
-            setTimeout(() => {
-                item.style.opacity = '1';
-                item.style.transform = 'translateY(0)';
-            }, 50);
-        }, index * 100);
-    });
 }
 
 // 渲染留言统计信息
@@ -1041,12 +1055,21 @@ function renderCommentsStats() {
     if (!totalElement) return;
     
     totalElement.textContent = totalComments;
+
+    if (repliedCommentsCountCache !== null && repliedElement) {
+        repliedElement.textContent = repliedCommentsCountCache;
+    }
+
+    if (pendingCommentsCountCache !== null && pendingElement) {
+        pendingElement.textContent = pendingCommentsCountCache;
+    }
     
     // 更新统计信息
     if (repliedElement) {
         // 显示所有留言中已回复的总数，而不是当前页面的回复数量
         // 通过API获取真实的已回复总数
         fetchRepliedCommentsCount().then(count => {
+            repliedCommentsCountCache = count;
             repliedElement.textContent = count;
         }).catch(error => {
             
@@ -1064,6 +1087,7 @@ function renderCommentsStats() {
     // 获取待回复的全局统计数据
     if (pendingElement) {
         fetchPendingCommentsCount().then(count => {
+            pendingCommentsCountCache = count;
             pendingElement.textContent = count;
         }).catch(error => {
             
@@ -1081,11 +1105,16 @@ function renderCommentsStats() {
 
 // 获取已回复留言的总数
 async function fetchRepliedCommentsCount() {
+    if (repliedCommentsCountCache !== null) {
+        return repliedCommentsCountCache;
+    }
+
     try {
         const apiUrl = typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : '/api';
         const response = await fetch(`${apiUrl}/comments?action=replied-count`);
         if (response.ok) {
             const data = await response.json();
+            repliedCommentsCountCache = data.count;
             return data.count;
         } else {
             throw new Error('Failed to fetch replied comments count');
@@ -1098,11 +1127,16 @@ async function fetchRepliedCommentsCount() {
 
 // 获取待回复留言的总数
 async function fetchPendingCommentsCount() {
+    if (pendingCommentsCountCache !== null) {
+        return pendingCommentsCountCache;
+    }
+
     try {
         const apiUrl = typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : '/api';
         const response = await fetch(`${apiUrl}/comments?action=pending-count`);
         if (response.ok) {
             const data = await response.json();
+            pendingCommentsCountCache = data.count;
             return data.count;
         } else {
             throw new Error('Failed to fetch pending comments count');
@@ -1698,17 +1732,8 @@ function setupSmoothScroll() {
 
 
 // 页面加载完成后执行
-document.addEventListener('DOMContentLoaded', function() {
-    // 
-    
-    // 完全分离文件列表和留言加载，确保文件列表优先显示
-    // 立即开始加载文件列表
-    fetchFiles(); // fetchFiles函数内部会调用renderFileList
-    
-    // 独立异步加载留言，不依赖文件列表加载完成
-    setTimeout(() => {
-        fetchComments();
-    }, 500); // 延迟500毫秒加载留言，确保文件列表优先
+document.addEventListener('DOMContentLoaded', async function() {
+    await fetchFiles();
     
     // 移动端优化：处理触摸事件以改善用户体验
     if ('ontouchstart' in window) {
@@ -1775,15 +1800,15 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             // 页面显示时重新启动定时器
             if (!filesRefreshInterval) {
-                filesRefreshInterval = setInterval(fetchFiles, 300000);
+                filesRefreshInterval = setInterval(fetchFiles, 300000000);
             }
         }
     });
     
     // 初始设置定时器
-    filesRefreshInterval = setInterval(fetchFiles, 300000);
+    filesRefreshInterval = setInterval(fetchFiles, 300000000);
     
-    let commentsRefreshInterval = setInterval(() => { fetchComments(1, true); }, 180000);
+    let commentsRefreshInterval = setInterval(() => { fetchComments(1, true); }, 180000000);
     
     // 添加联系方式类型变化事件监听器
     const contactTypeSelect = document.getElementById('contactType');
@@ -1944,24 +1969,29 @@ window.addEventListener('message', function(event) {
 
 // 设置管理员回复标记
 const adminReplied = localStorage.getItem('adminReplied');
-if (adminReplied === 'true') {
-    // 如果有管理员回复标记，刷新留言列表
-    
-    fetchComments(1, true); // 从第一页开始刷新
-    // 清除标记
-    localStorage.removeItem('adminReplied');
-    
-    // 设置留言刷新监听器
+
+setupCommentRefresh();
+
+window.addEventListener('load', function() {
     setupCommentRefresh();
-    
-    // 添加一个窗口加载事件作为备选方案
-    window.addEventListener('load', function() {
-        // 确保设置了留言刷新监听器
-        setupCommentRefresh();
-    });
-    
-    // 设置主页标记
+});
+
+if (adminReplied === 'true') {
+    localStorage.removeItem('adminReplied');
     localStorage.setItem('mainWindowOpen', 'true');
 }
+
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        if (adminReplied === 'true') {
+            fetchComments(1, true);
+            return;
+        }
+
+        if (!initialCommentsStarted) {
+            fetchComments(1);
+        }
+    });
+});
 
 }); // 结束 DOMContentLoaded
